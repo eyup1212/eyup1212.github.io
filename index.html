@@ -1,38 +1,55 @@
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #000;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-  }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Eyüp'ün Sitesi</title>
 
-  h1 {
-    font-size: 2.5em;
-    color: #00fff7;
-    text-shadow:
-      0 0 5px #00fff7,
-      0 0 10px #00fff7,
-      0 0 20px #00fff7,
-      0 0 40px #00b3ad;
-    animation: neon 1.5s infinite alternate;
-  }
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
 
-  @keyframes neon {
-    from {
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      color: #00fff7;
+      font-size: 2.5em;
       text-shadow:
         0 0 5px #00fff7,
         0 0 10px #00fff7,
-        0 0 20px #00fff7;
-    }
-    to {
-      text-shadow:
-        0 0 10px #00fff7,
         0 0 20px #00fff7,
-        0 0 40px #00fff7;
+        0 0 40px #00b3ad;
+      animation: neon 1.5s infinite alternate;
     }
-  }
-</style>
+
+    @keyframes neon {
+      from {
+        text-shadow:
+          0 0 5px #00fff7,
+          0 0 10px #00fff7,
+          0 0 20px #00fff7;
+      }
+      to {
+        text-shadow:
+          0 0 10px #00fff7,
+          0 0 20px #00fff7,
+          0 0 40px #00fff7;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🔥 Eyüp’ün Sitesine Hoş Geldin 🔥</h1>
+  </div>
+</body>
+</html>
