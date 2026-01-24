@@ -1,48 +1,38 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <title>Eyüp'ün Sitesi</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-    }
-    h1 {
-      color: #00ffcc;
-      margin-bottom: 10px;
-    }
-    p {
-      opacity: 0.8;
-      margin-bottom: 20px;
-    }
-    button {
-      background: #00ffcc;
-      color: #111;
-      border: none;
-      padding: 12px 25px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #00cca3;
-    }
-  </style>
-</head>
-<body>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
 
-  <h1>🔥 Eyüp'ün Sitesine Hoş Geldin 🔥</h1>
-  <p>Bu site GitHub Pages ile yapıldı.</p>
-  <button onclick="alert('Buton çalışıyor 🚀')">Tıkla Bakalım</button>
+  h1 {
+    font-size: 2.5em;
+    color: #00fff7;
+    text-shadow:
+      0 0 5px #00fff7,
+      0 0 10px #00fff7,
+      0 0 20px #00fff7,
+      0 0 40px #00b3ad;
+    animation: neon 1.5s infinite alternate;
+  }
 
-</body>
-</html>
+  @keyframes neon {
+    from {
+      text-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7,
+        0 0 20px #00fff7;
+    }
+    to {
+      text-shadow:
+        0 0 10px #00fff7,
+        0 0 20px #00fff7,
+        0 0 40px #00fff7;
+    }
+  }
+</style>
