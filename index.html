@@ -1,152 +1,90 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
+  <meta charset="UTF-8" />
+  <title>Giriş / Kayıt</title>
+
+  <!-- Supabase CDN -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <style>
     body {
-      background:#0b0f1a;
+      background:#0f172a;
+      color:white;
+      font-family:Arial;
       display:flex;
       justify-content:center;
       align-items:center;
       height:100vh;
-      font-family:Arial;
-      color:white;
     }
     .box {
-      background:#111;
+      background:#020617;
       padding:20px;
       border-radius:10px;
-      width:260px;
-      text-align:center;
+      width:300px;
     }
     input, button {
       width:100%;
+      padding:10px;
       margin-top:10px;
-      padding:8px;
-      border-radius:5px;
+      border-radius:6px;
       border:none;
     }
     button {
-      background:#1db954;
-      color:black;
-      font-weight:bold;
       cursor:pointer;
     }
-    #msg { margin-top:10px; font-size:13px; }
+    .login { background:#22c55e; }
+    .register { background:#3b82f6; }
+    #msg { margin-top:10px; }
   </style>
 </head>
 <body>
 
-<div class="box">
-  <h3>Giriş Yap</h3>
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Şifre">
-  <button type="button" onclick="login()">Giriş</button>
-  <button type="button" onclick="register()">Kayıt Ol</button>
-  <div id="msg"></div>
-</div>
+  <div class="box">
+    <h2>Giriş / Kayıt</h2>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Şifre">
 
-<script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <button class="login" onclick="login()">Giriş Yap</button>
+    <button class="register" onclick="register()">Kayıt Ol</button>
 
-<script>
-const supabaseUrl = "https://sbvhrcajrachprijofeu.supabase.co";
-const supabaseKey = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
+    <div id="msg"></div>
+  </div>
 
-const sb = supabase.createClient(supabaseUrl, supabaseKey);
+  <script>
+    // 🔴 BURAYA KENDİ BİLGİLERİN
+    const supabaseUrl = "https://sbvsharcjacrhpfjfeuo.supabase.co";
+    const supabaseKey = "sb_publishable_SZDpTJuKJpqvX1QRtbZZnLw_ybDzFhad";
 
-async function register() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  const { error } = await sb.auth.signUp({ email, password });
+    async function register() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-  document.getElementById("msg").innerText =
-    error ? error.message : "✅ Kayıt başarılı";
-}
+      const { error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
 
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-
-  document.getElementById("msg").innerText =
-    error ? error.message : "✅ Giriş başarılı";
-}
-</script>
-
-  const sb = supabase.createClient(supabaseUrl, supabaseKey);
-
-  async function register() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { error } = await sb.auth.signUp({
-      email: email,
-      password: password
-    });
-
-    if (error) {
-      document.getElementById("msg").innerText = "❌ " + error.message;
-    } else {
       document.getElementById("msg").innerText =
-        "✅ Kayıt başarılı! Şimdi giriş yapabilirsin.";
+        error ? "❌ " + error.message : "✅ Kayıt başarılı! Mailini kontrol et";
     }
-  }
 
-  async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-    const { error } = await sb.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-    if (error) {
-      document.getElementById("msg").innerText = "❌ " + error.message;
-    } else {
-      document.getElementById("msg").innerText = "✅ Giriş başarılı!";
-      // ileride buraya yönlendirme ekleriz
-      // window.location.href = "panel.html";
+      document.getElementById("msg").innerText =
+        error ? "❌ " + error.message : "✅ Giriş başarılı!";
     }
-  }
-</script>
-  const supabaseUrl = "https://sbvhrcajrachprijofeu.supabase.co";
-  const supabaseKey = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
-
-  const sb = supabase.createClient(supabaseUrl, supabaseKey);
-
-  async function register() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { error } = await sb.auth.signUp({
-      email,
-      password
-    });
-
-    document.getElementById("msg").innerText =
-      error ? error.message : "✅ Kayıt başarılı! Mailini kontrol et";
-  }
-
-  async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { error } = await sb.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    document.getElementById("msg").innerText =
-      error ? error.message : "✅ Giriş başarılı";
-  }
-</script>
+  </script>
 
 </body>
 </html>
