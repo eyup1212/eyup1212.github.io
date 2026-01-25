@@ -48,7 +48,48 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+  const supabaseUrl = "https://sbvhrcajrachprijofeu.supabase.co";
+  const supabaseKey = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
+
+  const sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function register() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { error } = await sb.auth.signUp({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      document.getElementById("msg").innerText = "❌ " + error.message;
+    } else {
+      document.getElementById("msg").innerText =
+        "✅ Kayıt başarılı! Şimdi giriş yapabilirsin.";
+    }
+  }
+
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { error } = await sb.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      document.getElementById("msg").innerText = "❌ " + error.message;
+    } else {
+      document.getElementById("msg").innerText = "✅ Giriş başarılı!";
+      // ileride buraya yönlendirme ekleriz
+      // window.location.href = "panel.html";
+    }
+  }
+</script>
   const supabaseUrl = "https://sbvhrcajrachprijofeu.supabase.co";
   const supabaseKey = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
 
