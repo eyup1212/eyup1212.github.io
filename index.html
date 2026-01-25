@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Giriş / Kayıt</title>
+  <meta charset="UTF-8">
+  <title>Login</title>
 
-  <!-- Supabase CDN -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     body {
       background:#0f172a;
-      color:white;
-      font-family:Arial;
+      color:#fff;
+      font-family:Arial, sans-serif;
       display:flex;
       justify-content:center;
       align-items:center;
@@ -38,53 +37,49 @@
     #msg { margin-top:10px; }
   </style>
 </head>
-<body>
 
+<body>
   <div class="box">
     <h2>Giriş / Kayıt</h2>
 
     <input id="email" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Şifre">
 
-    <button class="login" onclick="login()">Giriş Yap</button>
-    <button class="register" onclick="register()">Kayıt Ol</button>
+    <button type="button" class="login" onclick="login()">Giriş Yap</button>
+    <button type="button" class="register" onclick="register()">Kayıt Ol</button>
 
     <div id="msg"></div>
   </div>
 
   <script>
-    // 🔴 BURAYA KENDİ BİLGİLERİN
-    const supabaseUrl = "https://sbvsharcjacrhpfjfeuo.supabase.co";
-    const supabaseKey = "sb_publishable_SZDpTJuKJpqvX1QRtbZZnLw_ybDzFhad";
+    const SUPABASE_URL = "https://sbvhrcajrachprijofeu.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
 
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function register() {
+      document.getElementById("msg").innerText = "⏳ İşleniyor...";
+
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      const { error } = await supabase.auth.signUp({
-        email: email,
-        password: password
-      });
+      const { error } = await client.auth.signUp({ email, password });
 
       document.getElementById("msg").innerText =
         error ? "❌ " + error.message : "✅ Kayıt başarılı! Mailini kontrol et";
     }
 
     async function login() {
+      document.getElementById("msg").innerText = "⏳ Giriş yapılıyor...";
+
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
+      const { error } = await client.auth.signInWithPassword({ email, password });
 
       document.getElementById("msg").innerText =
-        error ? "❌ " + error.message : "✅ Giriş başarılı!";
+        error ? "❌ " + error.message : "✅ Giriş başarılı";
     }
   </script>
-
 </body>
 </html>
