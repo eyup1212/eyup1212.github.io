@@ -1,55 +1,94 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Eyüp'ün Sitesi</title>
+<meta charset="UTF-8">
+<title>Login</title>
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      text-align: center;
-    }
-
-    h1 {
-      color: #00fff7;
-      font-size: 2.5em;
-      text-shadow:
-        0 0 5px #00fff7,
-        0 0 10px #00fff7,
-        0 0 20px #00fff7,
-        0 0 40px #00b3ad;
-      animation: neon 1.5s infinite alternate;
-    }
-
-    @keyframes neon {
-      from {
-        text-shadow:
-          0 0 5px #00fff7,
-          0 0 10px #00fff7,
-          0 0 20px #00fff7;
-      }
-      to {
-        text-shadow:
-          0 0 10px #00fff7,
-          0 0 20px #00fff7,
-          0 0 40px #00fff7;
-      }
-    }
-  </style>
+<style>
+body {
+  background:#0f172a;
+  font-family: Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+}
+.box {
+  background:#020617;
+  padding:25px;
+  border-radius:10px;
+  width:280px;
+}
+input {
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:6px;
+  border:none;
+}
+button {
+  width:100%;
+  margin-top:12px;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  background:#22c55e;
+  font-weight:bold;
+}
+#msg {
+  margin-top:10px;
+  font-size:14px;
+}
+</style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>🔥 Eyüp’ün Sitesine Hoş Geldin 🔥</h1>
-  </div>
+
+<div class="box">
+  <h3>Giriş Yap</h3>
+
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Şifre">
+
+  <button onclick="login()">Giriş</button>
+  <button onclick="register()">Kayıt Ol</button>
+
+  <div id="msg"></div>
+</div>
+
+<!-- SUPABASE -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "BURAYA_PROJECT_URL";
+const supabaseKey = "BURAYA_ANON_PUBLIC_KEY";
+
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email, password
+  });
+
+  document.getElementById("msg").innerText =
+    error ? error.message : "Giriş başarılı ✅";
+}
+
+async function register() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await supabase.auth.signUp({
+    email, password
+  });
+
+  document.getElementById("msg").innerText =
+    error ? error.message : "Kayıt başarılı 📩 Mail kontrol et";
+}
+</script>
+
 </body>
 </html>
