@@ -1,51 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <title>Anonim Mesaj</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    .box {
+      background: #111;
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      border-radius: 8px;
+      border: none;
+      padding: 10px;
+      resize: none;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: black;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    #msg {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Anonim Mesaj Gönder</h2>
+  <div class="box">
+    <h2>Anonim Mesaj Gönder</h2>
+    <textarea id="message" placeholder="Mesajını yaz..."></textarea>
+    <button onclick="sendMessage()">Gönder</button>
+    <div id="msg"></div>
+  </div>
 
-<textarea id="msg" maxlength="300" placeholder="Mesaj yaz"></textarea><br>
-<button onclick="send()">Gönder</button>
+  <script>
+    const supabaseUrl = "https://sbvhrcajrachprijofeu.supabase.co";
+    const supabaseKey = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-<p id="info"></p>
+    async function sendMessage() {
+      const text = document.getElementById("message").value;
+      const msg = document.getElementById("msg");
 
-<script>
-const supabase = supabase.createClient(
-  "https://sbvhrcajrachprijofeu.supabase.co",
-  "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad"
-);
+      if (!text) {
+        msg.innerText = "❌ Mesaj boş olamaz";
+        return;
+      }
 
-// URL: ?user=kullaniciadi
-const params = new URLSearchParams(window.location.search);
-const username = params.get("user");
+      const { error } = await supabase
+        .from("messages")
+        .insert([{ content: text }]);
 
-async function send() {
-  const text = document.getElementById("msg").value;
-
-  const { data: user } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", username)
-    .single();
-
-  if (!user) {
-    document.getElementById("info").innerText = "Kullanıcı yok";
-    return;
-  }
-
-  await supabase.from("messages").insert({
-    to_user: user.id,
-    content: text
-  });
-
-  document.getElementById("info").innerText = "✅ Gönderildi";
-}
-</script>
+      if (error) {
+        msg.innerText = "❌ Hata: " + error.message;
+      } else {
+        msg.innerText = "✅ Mesaj gönderildi";
+        document.getElementById("message").value = "";
+      }
+    }
+  </script>
 
 </body>
 </html>
