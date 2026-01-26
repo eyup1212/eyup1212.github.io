@@ -1,67 +1,54 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Giriş • Kayıt</title>
+  <meta charset="UTF-8">
+  <title>Giriş / Kayıt</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
     body {
       margin: 0;
       height: 100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       display: flex;
       align-items: center;
       justify-content: center;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: Arial, sans-serif;
       color: #fff;
     }
-
     .card {
       background: #111;
-      width: 350px;
       padding: 25px;
+      width: 330px;
       border-radius: 14px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+      box-shadow: 0 0 30px rgba(0,0,0,.6);
     }
-
-    h1 {
+    h2 {
       text-align: center;
       margin-bottom: 20px;
     }
-
     input {
       width: 100%;
       padding: 12px;
       margin-bottom: 12px;
       border-radius: 8px;
       border: none;
-      outline: none;
       background: #222;
       color: #fff;
-      font-size: 15px;
     }
-
     button {
       width: 100%;
       padding: 12px;
-      border-radius: 8px;
       border: none;
+      border-radius: 8px;
       background: #4f9cff;
       color: #fff;
       font-size: 16px;
       cursor: pointer;
-      transition: 0.2s;
     }
-
     button:hover {
       background: #357fe0;
     }
-
     .switch {
       text-align: center;
       margin-top: 12px;
@@ -69,99 +56,87 @@
       cursor: pointer;
       color: #aaa;
     }
-
-    .switch span {
-      color: #4f9cff;
-    }
-
-    .msg {
+    .error {
+      color: #ff4d4d;
       text-align: center;
       margin-top: 10px;
       font-size: 14px;
     }
-
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
+
 <body>
 
-  <div class="card">
-    <h1 id="title">Giriş Yap</h1>
+<div class="card">
+  <h2 id="title">Giriş Yap</h2>
 
-    <!-- REGISTER EXTRA -->
-    <input id="displayName" class="hidden" placeholder="Görünen isim">
-    <input id="emoji" class="hidden" placeholder="Emoji (😎🔥💀)">
+  <input type="email" id="email" placeholder="E-posta">
+  <input type="password" id="password" placeholder="Şifre">
 
-    <!-- COMMON -->
-    <input id="tag" placeholder="İsim etiketi (@eyup)">
-    <input id="password" type="password" placeholder="Şifre">
+  <button onclick="login()">Giriş Yap</button>
 
-    <button onclick="submit()">Devam Et</button>
-
-    <div class="msg" id="msg"></div>
-
-    <div class="switch" onclick="toggleMode()">
-      Hesabın yok mu? <span>Kayıt ol</span>
-    </div>
+  <div class="switch" onclick="toggleMode()">
+    Hesabın yok mu? Kayıt ol
   </div>
 
-  <script>
-    let mode = "login"; // login | register
+  <div class="error" id="error"></div>
+</div>
 
-    function toggleMode() {
-      mode = mode === "login" ? "register" : "login";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
-      document.getElementById("title").innerText =
-        mode === "login" ? "Giriş Yap" : "Kayıt Ol";
+  const firebaseConfig = {
+    apiKey: "BURAYA_KENDİ_API_KEY",
+    authDomain: "etik-social.firebaseapp.com",
+    projectId: "etik-social",
+    storageBucket: "etik-social.appspot.com",
+    messagingSenderId: "358422049811",
+    appId: "1:358422049811:web:bda144f9d443b2db65fbe6"
+  };
 
-      document.getElementById("displayName").classList.toggle("hidden");
-      document.getElementById("emoji").classList.toggle("hidden");
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-      document.querySelector(".switch").innerHTML =
-        mode === "login"
-          ? 'Hesabın yok mu? <span>Kayıt ol</span>'
-          : 'Zaten hesabın var mı? <span>Giriş yap</span>';
+  let isLogin = true;
 
-      document.getElementById("msg").innerText = "";
+  window.toggleMode = () => {
+    isLogin = !isLogin;
+    document.getElementById("title").innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
+    document.querySelector("button").innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
+    document.querySelector(".switch").innerText =
+      isLogin ? "Hesabın yok mu? Kayıt ol" : "Hesabın var mı? Giriş yap";
+    document.getElementById("error").innerText = "";
+  };
+
+  window.login = () => {
+    const email = email.value;
+    const password = password.value;
+
+    if (!email || !password) {
+      error.innerText = "Boş alan bırakma";
+      return;
     }
 
-    function submit() {
-      const tag = document.getElementById("tag").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const msg = document.getElementById("msg");
-
-      if (!tag || !password) {
-        msg.innerText = "Etiket ve şifre boş olamaz.";
-        msg.style.color = "orange";
-        return;
-      }
-
-      if (mode === "register") {
-        const name = document.getElementById("displayName").value.trim();
-        const emoji = document.getElementById("emoji").value.trim();
-
-        if (!name || !emoji) {
-          msg.innerText = "İsim ve emoji gerekli.";
-          msg.style.color = "orange";
-          return;
-        }
-
-        msg.innerText = "Kayıt başarılı ✅";
-        msg.style.color = "lightgreen";
-
-        // burada sonra Supabase bağlayacağız
-      } else {
-        msg.innerText = "Giriş başarılı, yönlendiriliyorsun...";
-        msg.style.color = "lightgreen";
-
-        setTimeout(() => {
+    if (isLogin) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
           window.location.href = "home.html";
-        }, 1000);
-      }
+        })
+        .catch(err => {
+          error.innerText = "E-posta veya şifre yanlış";
+        });
+    } else {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          window.location.href = "home.html";
+        })
+        .catch(err => {
+          error.innerText = "Bu e-posta zaten kayıtlı";
+        });
     }
-  </script>
+  };
+</script>
 
 </body>
 </html>
