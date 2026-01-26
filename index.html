@@ -2,140 +2,46 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Giriş / Kayıt</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      font-family: Arial, sans-serif;
-      color: #fff;
-    }
-    .card {
-      background: #111;
-      padding: 25px;
-      width: 330px;
-      border-radius: 14px;
-      box-shadow: 0 0 30px rgba(0,0,0,.6);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      border: none;
-      background: #222;
-      color: #fff;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #4f9cff;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #357fe0;
-    }
-    .switch {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-      cursor: pointer;
-      color: #aaa;
-    }
-    .error {
-      color: #ff4d4d;
-      text-align: center;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-  </style>
+  <title>Login</title>
 </head>
-
 <body>
 
-<div class="card">
-  <h2 id="title">Giriş Yap</h2>
+<h2>Kayıt Ol</h2>
+<input id="regUser" placeholder="Kullanıcı adı">
+<input id="regPass" type="password" placeholder="Şifre">
+<button onclick="register()">Kayıt Ol</button>
 
-  <input type="email" id="email" placeholder="E-posta">
-  <input type="password" id="password" placeholder="Şifre">
+<hr>
 
-  <button onclick="login()">Giriş Yap</button>
+<h2>Giriş Yap</h2>
+<input id="loginUser" placeholder="Kullanıcı adı">
+<input id="loginPass" type="password" placeholder="Şifre">
+<button onclick="login()">Giriş Yap</button>
 
-  <div class="switch" onclick="toggleMode()">
-    Hesabın yok mu? Kayıt ol
-  </div>
+<script>
+function register() {
+  const u = regUser.value;
+  const p = regPass.value;
+  if (!u || !p) return alert("Boş bırakma");
 
-  <div class="error" id="error"></div>
-</div>
+  localStorage.setItem("user", u);
+  localStorage.setItem("pass", p);
+  alert("Kayıt başarılı");
+}
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+function login() {
+  const u = loginUser.value;
+  const p = loginPass.value;
 
-  const firebaseConfig = {
-    apiKey: "BURAYA_KENDİ_API_KEY",
-    authDomain: "etik-social.firebaseapp.com",
-    projectId: "etik-social",
-    storageBucket: "etik-social.appspot.com",
-    messagingSenderId: "358422049811",
-    appId: "1:358422049811:web:bda144f9d443b2db65fbe6"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  let isLogin = true;
-
-  window.toggleMode = () => {
-    isLogin = !isLogin;
-    document.getElementById("title").innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
-    document.querySelector("button").innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
-    document.querySelector(".switch").innerText =
-      isLogin ? "Hesabın yok mu? Kayıt ol" : "Hesabın var mı? Giriş yap";
-    document.getElementById("error").innerText = "";
-  };
-
-  window.login = () => {
-    const email = email.value;
-    const password = password.value;
-
-    if (!email || !password) {
-      error.innerText = "Boş alan bırakma";
-      return;
-    }
-
-    if (isLogin) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          window.location.href = "home.html";
-        })
-        .catch(err => {
-          error.innerText = "E-posta veya şifre yanlış";
-        });
-    } else {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          window.location.href = "home.html";
-        })
-        .catch(err => {
-          error.innerText = "Bu e-posta zaten kayıtlı";
-        });
-    }
-  };
+  if (
+    u === localStorage.getItem("user") &&
+    p === localStorage.getItem("pass")
+  ) {
+    window.location.href = "home.html";
+  } else {
+    alert("Hatalı kullanıcı adı veya şifre");
+  }
+}
 </script>
 
 </body>
