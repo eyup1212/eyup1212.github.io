@@ -1,85 +1,51 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
-
+  <title>Anonim Mesaj</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    body {
-      background:#0f172a;
-      color:#fff;
-      font-family:Arial, sans-serif;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-    }
-    .box {
-      background:#020617;
-      padding:20px;
-      border-radius:10px;
-      width:300px;
-    }
-    input, button {
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      border-radius:6px;
-      border:none;
-    }
-    button {
-      cursor:pointer;
-    }
-    .login { background:#22c55e; }
-    .register { background:#3b82f6; }
-    #msg { margin-top:10px; }
-  </style>
 </head>
-
 <body>
-  <div class="box">
-    <h2>Giriş / Kayıt</h2>
 
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Şifre">
+<h2>Anonim Mesaj Gönder</h2>
 
-    <button type="button" class="login" onclick="login()">Giriş Yap</button>
-    <button type="button" class="register" onclick="register()">Kayıt Ol</button>
+<textarea id="msg" maxlength="300" placeholder="Mesaj yaz"></textarea><br>
+<button onclick="send()">Gönder</button>
 
-    <div id="msg"></div>
-  </div>
+<p id="info"></p>
 
-  <script>
-    const SUPABASE_URL = "https://sbvhrcajrachprijofeu.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad";
+<script>
+const supabase = supabase.createClient(
+  "https://sbvhrcajrachprijofeu.supabase.co",
+  "sb_publishable_SZDpTJkUpqvX1QRbtZZnLw_ybdZfhad"
+);
 
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// URL: ?user=kullaniciadi
+const params = new URLSearchParams(window.location.search);
+const username = params.get("user");
 
-    async function register() {
-      document.getElementById("msg").innerText = "⏳ İşleniyor...";
+async function send() {
+  const text = document.getElementById("msg").value;
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  const { data: user } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", username)
+    .single();
 
-      const { error } = await client.auth.signUp({ email, password });
+  if (!user) {
+    document.getElementById("info").innerText = "Kullanıcı yok";
+    return;
+  }
 
-      document.getElementById("msg").innerText =
-        error ? "❌ " + error.message : "✅ Kayıt başarılı! Mailini kontrol et";
-    }
+  await supabase.from("messages").insert({
+    to_user: user.id,
+    content: text
+  });
 
-    async function login() {
-      document.getElementById("msg").innerText = "⏳ Giriş yapılıyor...";
+  document.getElementById("info").innerText = "✅ Gönderildi";
+}
+</script>
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      const { error } = await client.auth.signInWithPassword({ email, password });
-
-      document.getElementById("msg").innerText =
-        error ? "❌ " + error.message : "✅ Giriş başarılı";
-    }
-  </script>
 </body>
 </html>
