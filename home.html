@@ -1,80 +1,103 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Ana Menü</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Ana Menü</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      background: #0f172a;
-      color: white;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  background:#0f172a;
+  color:white;
+  font-family:Arial, Helvetica, sans-serif;
+}
 
-    .sidebar {
-      width: 220px;
-      background: #020617;
-      padding: 15px;
-    }
+.sidebar{
+  width:230px;
+  background:#020617;
+  padding:15px;
+}
 
-    .sidebar h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+.sidebar h2{
+  text-align:center;
+  margin-bottom:20px;
+}
 
-    .menu-btn {
-      background: #1e293b;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-      text-align: center;
-    }
+.menu-btn{
+  background:#1e293b;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
 
-    .menu-btn:hover {
-      background: #334155;
-    }
+.menu-btn:hover{
+  background:#334155;
+}
 
-    .content {
-      flex: 1;
-      padding: 20px;
-    }
+.content{
+  flex:1;
+  padding:20px;
+}
 
-    .box {
-      background: #020617;
-      border-radius: 12px;
-      padding: 20px;
-      height: 100%;
-    }
-  </style>
+.box{
+  background:#020617;
+  border-radius:12px;
+  padding:20px;
+  height:100%;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="sidebar">
-    <h2>🔥 Menü</h2>
-    <div class="menu-btn">💬 DM</div>
-    <div class="menu-btn">👥 Gruplar</div>
-    <div class="menu-btn">🕶️ Anonim Mesaj</div>
-    <div class="menu-btn" onclick="logout()">🚪 Çıkış</div>
-  </div>
+<div class="sidebar">
+  <h2>🔥 Menü</h2>
+  <div class="menu-btn" onclick="showDM()">💬 DM</div>
+  <div class="menu-btn" onclick="showGroups()">👥 Gruplar</div>
+  <div class="menu-btn" onclick="showAnon()">🕶️ Anonim Mesaj</div>
+  <div class="menu-btn" onclick="logout()">🚪 Çıkış</div>
+</div>
 
-  <div class="content">
-    <div class="box">
-      <h1>Hoş geldin 👋</h1>
-      <p>Soldan bir bölüm seç.</p>
-    </div>
+<div class="content">
+  <div class="box" id="contentBox">
+    <h1>Hoş geldin 👋</h1>
+    <p>Soldan bir bölüm seç.</p>
   </div>
+</div>
 
-  <script>
-    function logout() {
-      window.location.href = "index.html";
-    }
-  </script>
+<script>
+function showDM(){
+  document.getElementById("contentBox").innerHTML = `
+    <h2>💬 DM</h2>
+    <p>Kişi seç → mesajlaş</p>
+  `;
+}
+
+function showGroups(){
+  document.getElementById("contentBox").innerHTML = `
+    <h2>👥 Gruplar</h2>
+    <p>Grup oluştur / gruplara katıl</p>
+  `;
+}
+
+function showAnon(){
+  document.getElementById("contentBox").innerHTML = `
+    <h2>🕶️ Anonim Mesaj</h2>
+    <textarea style="width:100%;height:120px;border-radius:8px;"></textarea>
+    <br><br>
+    <button onclick="alert('Anonim mesaj gönderildi ✅')">Gönder</button>
+  `;
+}
+
+function logout(){
+  window.location.href="index.html";
+}
+</script>
 
 </body>
 </html>
