@@ -16,12 +16,16 @@ body {
 }
 
 .menu {
-  width: 220px;
+  width: 230px;
   background: #020617;
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.menu button {
+.menu-top button,
+.menu-bottom button {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
@@ -42,7 +46,7 @@ body {
 }
 
 #messages {
-  height: 70vh;
+  height: 60vh;
   overflow-y: auto;
   border: 1px solid #334155;
   padding: 10px;
@@ -57,18 +61,18 @@ body {
   border-radius: 6px;
 }
 
-input {
-  width: 80%;
+input, textarea {
+  width: 100%;
   padding: 10px;
   border-radius: 6px;
   border: none;
+  margin-bottom: 10px;
 }
 
 button.send {
   padding: 10px;
   border-radius: 6px;
   border: none;
-  margin-left: 5px;
   background: #22c55e;
   color: black;
 }
@@ -78,20 +82,36 @@ button.send {
 <body>
 
 <div class="menu">
-  <button onclick="openDM()">💬 DM</button>
-  <button onclick="alert('Sonra yapılacak')">👥 Gruplar</button>
-  <button onclick="alert('Sonra yapılacak')">🕵️ Anonim Mesaj</button>
-  <button onclick="location.href='index.html'">🚪 Çıkış</button>
+  <div class="menu-top">
+    <button onclick="home()">🏠 Ana Sayfa</button>
+    <button onclick="openDM()">💬 DM</button>
+    <button onclick="alert('Yakında')">👥 Gruplar</button>
+    <button onclick="openAnonim()">🕵️ Anonim Mesaj</button>
+  </div>
+
+  <div class="menu-bottom">
+    <button onclick="openProfile()">👤 Profil</button>
+    <button onclick="location.href='index.html'">🚪 Çıkış</button>
+  </div>
 </div>
 
-<div class="content" id="content">
-  <h2>Hoş geldin 👋</h2>
-  <p>Soldan bir bölüm seç</p>
-</div>
+<div class="content" id="content"></div>
 
 <script>
+const name = localStorage.getItem("name") || "Misafir";
+const emoji = localStorage.getItem("emoji") || "🙂";
+
+home();
+
+function home() {
+  content.innerHTML = `
+    <h2>Hoş geldin ${emoji} ${name}</h2>
+    <p>Soldan bir bölüm seç</p>
+  `;
+}
+
 function openDM() {
-  document.getElementById("content").innerHTML = `
+  content.innerHTML = `
     <h2>DM</h2>
     <div id="messages"></div>
     <input id="msgInput" placeholder="Mesaj yaz..." />
@@ -100,17 +120,39 @@ function openDM() {
 }
 
 function sendMsg() {
-  const input = document.getElementById("msgInput");
-  if (input.value.trim() === "") return;
-
-  const msgBox = document.getElementById("messages");
-  const div = document.createElement("div");
-  div.className = "msg";
-  div.textContent = "Sen: " + input.value;
-
-  msgBox.appendChild(div);
+  const input = msgInput;
+  if (!input.value.trim()) return;
+  messages.innerHTML += `<div class="msg">${emoji} ${name}: ${input.value}</div>`;
   input.value = "";
-  msgBox.scrollTop = msgBox.scrollHeight;
+}
+
+function openAnonim() {
+  content.innerHTML = `
+    <h2>🕵️ Anonim Mesaj</h2>
+    <textarea id="anonMsg" placeholder="Anonim mesaj yaz..."></textarea>
+    <button class="send" onclick="sendAnon()">Gönder</button>
+  `;
+}
+
+function sendAnon() {
+  alert("Anonim mesaj gönderildi ✅");
+  anonMsg.value = "";
+}
+
+function openProfile() {
+  content.innerHTML = `
+    <h2>👤 Profil Düzenle</h2>
+    <input id="pname" placeholder="İsim" value="${name}">
+    <input id="pemoji" placeholder="Emoji 😎" value="${emoji}">
+    <button class="send" onclick="saveProfile()">Kaydet</button>
+  `;
+}
+
+function saveProfile() {
+  localStorage.setItem("name", pname.value);
+  localStorage.setItem("emoji", pemoji.value);
+  alert("Profil kaydedildi ✅");
+  home();
 }
 </script>
 
