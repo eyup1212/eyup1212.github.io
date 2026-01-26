@@ -2,157 +2,102 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana Menü</title>
 
 <style>
 body {
   margin: 0;
-  height: 100vh;
-  display: flex;
-  background: #0f172a;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, #0f172a, #020617);
   color: white;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
 }
 
-.menu {
-  width: 230px;
-  background: #020617;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+/* ÜST BAŞLIK */
+.header {
+  padding: 16px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.menu-top button,
-.menu-bottom button {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 8px;
+/* ORTA ALAN */
+.container {
+  padding: 16px;
+  padding-bottom: 90px;
+}
+
+.card {
   background: #1e293b;
-  color: white;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:active {
+  transform: scale(0.97);
+}
+
+/* ALT BAR */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 70px;
+  background: #020617;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #334155;
+}
+
+.bottom-btn {
+  text-align: center;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.menu button:hover {
-  background: #334155;
-}
-
-.content {
-  flex: 1;
-  padding: 20px;
-}
-
-#messages {
-  height: 60vh;
-  overflow-y: auto;
-  border: 1px solid #334155;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.msg {
-  margin-bottom: 8px;
-  background: #1e293b;
-  padding: 8px;
-  border-radius: 6px;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-  margin-bottom: 10px;
-}
-
-button.send {
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-  background: #22c55e;
-  color: black;
+.bottom-btn span {
+  display: block;
+  font-size: 22px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="menu">
-  <div class="menu-top">
-    <button onclick="home()">🏠 Ana Sayfa</button>
-    <button onclick="openDM()">💬 DM</button>
-    <button onclick="alert('Yakında')">👥 Gruplar</button>
-    <button onclick="openAnonim()">🕵️ Anonim Mesaj</button>
-  </div>
+<div class="header">
+🔥 Sohbet Uygulaması
+</div>
 
-  <div class="menu-bottom">
-    <button onclick="openProfile()">👤 Profil</button>
-    <button onclick="location.href='index.html'">🚪 Çıkış</button>
+<div class="container">
+  <div class="card" onclick="go('dm.html')">💬 DM</div>
+  <div class="card" onclick="go('groups.html')">👥 Gruplar</div>
+  <div class="card" onclick="go('anonymous.html')">🕵️ Anonim Mesaj</div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-btn" onclick="go('home.html')">
+    <span>🏠</span>Ana
+  </div>
+  <div class="bottom-btn" onclick="go('dm.html')">
+    <span>💬</span>DM
+  </div>
+  <div class="bottom-btn" onclick="go('search.html')">
+    <span>🔍</span>Ara
+  </div>
+  <div class="bottom-btn" onclick="go('profile.html')">
+    <span>👤</span>Profil
   </div>
 </div>
 
-<div class="content" id="content"></div>
-
 <script>
-const name = localStorage.getItem("name") || "Misafir";
-const emoji = localStorage.getItem("emoji") || "🙂";
-
-home();
-
-function home() {
-  content.innerHTML = `
-    <h2>Hoş geldin ${emoji} ${name}</h2>
-    <p>Soldan bir bölüm seç</p>
-  `;
-}
-
-function openDM() {
-  content.innerHTML = `
-    <h2>DM</h2>
-    <div id="messages"></div>
-    <input id="msgInput" placeholder="Mesaj yaz..." />
-    <button class="send" onclick="sendMsg()">Gönder</button>
-  `;
-}
-
-function sendMsg() {
-  const input = msgInput;
-  if (!input.value.trim()) return;
-  messages.innerHTML += `<div class="msg">${emoji} ${name}: ${input.value}</div>`;
-  input.value = "";
-}
-
-function openAnonim() {
-  content.innerHTML = `
-    <h2>🕵️ Anonim Mesaj</h2>
-    <textarea id="anonMsg" placeholder="Anonim mesaj yaz..."></textarea>
-    <button class="send" onclick="sendAnon()">Gönder</button>
-  `;
-}
-
-function sendAnon() {
-  alert("Anonim mesaj gönderildi ✅");
-  anonMsg.value = "";
-}
-
-function openProfile() {
-  content.innerHTML = `
-    <h2>👤 Profil Düzenle</h2>
-    <input id="pname" placeholder="İsim" value="${name}">
-    <input id="pemoji" placeholder="Emoji 😎" value="${emoji}">
-    <button class="send" onclick="saveProfile()">Kaydet</button>
-  `;
-}
-
-function saveProfile() {
-  localStorage.setItem("name", pname.value);
-  localStorage.setItem("emoji", pemoji.value);
-  alert("Profil kaydedildi ✅");
-  home();
+function go(page) {
+  window.location.href = page;
 }
 </script>
 
