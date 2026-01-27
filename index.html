@@ -2,21 +2,24 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Etik Social</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .container {
-      max-width: 400px;
-      margin: 60px auto;
-      background: white;
+    .box {
+      width: 320px;
+      background: #111;
       padding: 20px;
       border-radius: 10px;
     }
@@ -25,131 +28,122 @@
       width: 100%;
       padding: 10px;
       margin-top: 10px;
-      font-size: 16px;
+      border-radius: 5px;
+      border: none;
     }
 
     button {
-      background: #3897f0;
-      color: white;
-      border: none;
-      border-radius: 5px;
+      background: #1da1f2;
+      color: #fff;
+      font-weight: bold;
       cursor: pointer;
     }
 
     .msg {
       margin-top: 10px;
       text-align: center;
-      font-weight: bold;
+      font-size: 14px;
     }
 
-    .success { color: green; }
     .error { color: red; }
+    .success { color: lime; }
 
-    #home {
-      display: none;
+    .link {
+      margin-top: 10px;
       text-align: center;
+      color: #1da1f2;
+      cursor: pointer;
     }
+
+    .hidden { display: none; }
   </style>
 </head>
+
 <body>
 
-<div class="container" id="auth">
-  <h2>Giriş / Kayıt</h2>
+  <!-- LOGIN -->
+  <div class="box" id="loginView">
+    <h2>Giriş Yap</h2>
+    <input id="loginUser" placeholder="Kullanıcı adı">
+    <input id="loginPass" type="password" placeholder="Şifre">
+    <div id="loginMsg" class="msg"></div>
+    <button onclick="login()">Giriş Yap</button>
+    <div class="link" onclick="showRegister()">Kayıt ol</div>
+  </div>
 
-  <input id="username" placeholder="Kullanıcı adı">
-  <input id="password" type="password" placeholder="Şifre">
-  <input id="emoji" placeholder="Emoji 😎">
+  <!-- REGISTER -->
+  <div class="box hidden" id="registerView">
+    <h2>Kayıt Ol</h2>
+    <input id="regUser" placeholder="Kullanıcı adı">
+    <input id="regEmoji" placeholder="Emoji 😎">
+    <input id="regPass" type="password" placeholder="Şifre">
+    <div id="regMsg" class="msg"></div>
+    <button onclick="register()">Kayıt Ol</button>
+    <div class="link" onclick="showLogin()">Geri dön</div>
+  </div>
 
-  <button onclick="register()">Kayıt Ol</button>
-  <button onclick="login()">Giriş Yap</button>
+  <!-- HOME -->
+  <div class="box hidden" id="homeView">
+    <h2>🏠 Ana Sayfa</h2>
+    <p id="welcome"></p>
+    <button onclick="logout()">Çıkış Yap</button>
+  </div>
 
-  <div id="msg" class="msg"></div>
-</div>
+<script>
+  const loginView = document.getElementById("loginView");
+  const registerView = document.getElementById("registerView");
+  const homeView = document.getElementById("homeView");
 
-<div class="container" id="home">
-  <h2>Hoş geldin 👋</h2>
-  <p id="userInfo"></p>
-  <button onclick="logout()">Çıkış Yap</button>
-</div>
-
-<!-- FIREBASE -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
-    authDomain: "etik-social.firebaseapp.com",
-    projectId: "etik-social",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const authBox = document.getElementById("auth");
-  const homeBox = document.getElementById("home");
-  const msg = document.getElementById("msg");
-
-  const userInfo = document.getElementById("userInfo");
-
-  function showHome(user) {
-    authBox.style.display = "none";
-    homeBox.style.display = "block";
-    userInfo.innerText = `${user.emoji} ${user.username}`;
+  function showRegister() {
+    loginView.classList.add("hidden");
+    registerView.classList.remove("hidden");
   }
 
-  // Session kontrol
-  const saved = sessionStorage.getItem("user");
-  if (saved) showHome(JSON.parse(saved));
+  function showLogin() {
+    registerView.classList.add("hidden");
+    loginView.classList.remove("hidden");
+  }
 
-  window.register = async () => {
-    msg.innerHTML = "";
+  function login() {
+    const u = loginUser.value;
+    const p = loginPass.value;
 
-    const username = username.value.trim();
-    const password = password.value;
-    const emoji = emoji.value || "🙂";
-
-    if (!username || !password) {
-      msg.innerHTML = "<span class='error'>Eksik bilgi</span>";
+    if (!u || !p) {
+      loginMsg.innerHTML = "<span class='error'>Eksik bilgi</span>";
       return;
     }
 
-    const ref = doc(db, "users", username);
-    const snap = await getDoc(ref);
+    localStorage.setItem("user", u);
+    loginMsg.innerHTML = "<span class='success'>Giriş başarılı</span>";
+    setTimeout(showHome, 500);
+  }
 
-    if (snap.exists()) {
-      msg.innerHTML = "<span class='error'>Bu kullanıcı adı alınmış</span>";
+  function register() {
+    if (!regUser.value || !regPass.value) {
+      regMsg.innerHTML = "<span class='error'>Eksik bilgi</span>";
       return;
     }
 
-    await setDoc(ref, { username, password, emoji });
+    regMsg.innerHTML = "<span class='success'>Kayıt başarılı</span>";
+    setTimeout(showLogin, 800);
+  }
 
-    msg.innerHTML = "<span class='success'>Kayıt başarılı</span>";
-  };
+  function showHome() {
+    loginView.classList.add("hidden");
+    registerView.classList.add("hidden");
+    homeView.classList.remove("hidden");
+    welcome.innerText = "Hoş geldin " + localStorage.getItem("user");
+  }
 
-  window.login = async () => {
-    msg.innerHTML = "";
-
-    const u = username.value.trim();
-    const p = password.value;
-
-    const ref = doc(db, "users", u);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists() || snap.data().password !== p) {
-      msg.innerHTML = "<span class='error'>Giriş başarısız</span>";
-      return;
-    }
-
-    const user = snap.data();
-    sessionStorage.setItem("user", JSON.stringify(user));
-    showHome(user);
-  };
-
-  window.logout = () => {
-    sessionStorage.clear();
+  function logout() {
+    localStorage.removeItem("user");
     location.reload();
-  };
+  }
+
+  // sayfa yenilenirse
+  if (localStorage.getItem("user")) {
+    showHome();
+  }
 </script>
 
 </body>
