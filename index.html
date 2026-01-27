@@ -5,92 +5,71 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Etik Social</title>
 
-<style>
-* {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
+<script type="module" src="firebase.js"></script>
 
+<style>
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #1f3c46, #0b1417);
+  font-family: system-ui;
 }
 
 .card {
-  width: 100%;
-  max-width: 360px;
-  background: #0b0b0b;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  width: 320px;
+  background: #0f0f0f;
+  padding: 22px;
+  border-radius: 18px;
 }
 
-h1 {
-  color: #fff;
+h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 input {
   width: 100%;
-  padding: 14px;
-  margin-bottom: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
   border-radius: 10px;
   border: none;
-  background: #1c1c1c;
+  background: #1e1e1e;
   color: #fff;
-  font-size: 15px;
-}
-
-input::placeholder {
-  color: #888;
 }
 
 button {
   width: 100%;
-  padding: 14px;
-  background: #4f9cff;
-  border: none;
+  padding: 12px;
   border-radius: 12px;
-  font-size: 16px;
+  border: none;
+  background: #4f9cff;
+  color: white;
   font-weight: 600;
-  color: #fff;
   cursor: pointer;
 }
 
-button:hover {
-  opacity: .9;
+.msg {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
+
+.success { color: #4caf50; }
+.error { color: #ff4c4c; }
 
 .switch {
   text-align: center;
-  margin-top: 14px;
-  color: #aaa;
+  margin-top: 12px;
   font-size: 14px;
+  color: #aaa;
 }
 
 .switch span {
   color: #4f9cff;
   cursor: pointer;
-}
-
-.message {
-  text-align: center;
-  margin-bottom: 12px;
-  font-size: 14px;
-  display: none;
-}
-
-.success {
-  color: #4cff7a;
-}
-
-.error {
-  color: #ff4c4c;
 }
 </style>
 </head>
@@ -98,80 +77,85 @@ button:hover {
 <body>
 
 <div class="card">
+  <h2 id="title">Giriş Yap</h2>
 
-  <h1 id="title">Giriş Yap</h1>
+  <input id="displayName" placeholder="Görünen isim" style="display:none">
+  <input id="emoji" placeholder="Emoji 😎🔥" style="display:none">
 
-  <div id="msg" class="message"></div>
+  <input id="username" placeholder="İsim etiketi (@eyup)">
+  <input id="password" type="password" placeholder="Şifre">
 
-  <!-- REGISTER -->
-  <div id="register" style="display:none;">
-    <input id="r_name" placeholder="Görünen isim">
-    <input id="r_emoji" placeholder="Emoji 😎🔥💀">
-    <input id="r_username" placeholder="İsim etiketi (@eyup)">
-    <input id="r_password" type="password" placeholder="Şifre">
-    <button onclick="register()">Devam Et</button>
-  </div>
+  <div id="msg" class="msg"></div>
 
-  <!-- LOGIN -->
-  <div id="login">
-    <input id="l_username" placeholder="İsim etiketi (@eyup)">
-    <input id="l_password" type="password" placeholder="Şifre">
-    <button onclick="login()">Devam Et</button>
-  </div>
+  <button onclick="action()">Devam Et</button>
 
   <div class="switch">
     <span id="switchText" onclick="toggle()">Hesabın yok mu? Kayıt ol</span>
   </div>
-
 </div>
 
-<script>
-let isLogin = true;
-const msg = document.getElementById("msg");
+<script type="module">
+import { db } from "./firebase.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-function toggle() {
-  isLogin = !isLogin;
-  document.getElementById("login").style.display = isLogin ? "block" : "none";
-  document.getElementById("register").style.display = isLogin ? "none" : "block";
-  document.getElementById("title").innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
+let mode = "login";
+
+window.toggle = () => {
+  mode = mode === "login" ? "register" : "login";
+  document.getElementById("title").innerText = mode === "login" ? "Giriş Yap" : "Kayıt Ol";
+  document.getElementById("displayName").style.display = mode === "register" ? "block" : "none";
+  document.getElementById("emoji").style.display = mode === "register" ? "block" : "none";
   document.getElementById("switchText").innerText =
-    isLogin ? "Hesabın yok mu? Kayıt ol" : "Zaten hesabın var mı? Giriş yap";
-  msg.style.display = "none";
-}
+    mode === "login" ? "Hesabın yok mu? Kayıt ol" : "Zaten hesabın var mı? Giriş yap";
+};
 
-function showMessage(text, type) {
-  msg.innerText = text;
-  msg.className = "message " + type;
-  msg.style.display = "block";
-}
+window.action = async () => {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const displayName = document.getElementById("displayName").value.trim();
+  const emoji = document.getElementById("emoji").value.trim();
+  const msg = document.getElementById("msg");
 
-function login() {
-  const u = l_username.value.trim();
-  const p = l_password.value.trim();
+  msg.innerText = "";
+  msg.className = "msg";
 
-  if (!u || !p) {
-    showMessage("Boş alan bırakma", "error");
+  if (!username || !password) {
+    msg.innerText = "Boş alan bırakma";
+    msg.classList.add("error");
     return;
   }
 
-  // 🔴 ŞİMDİLİK SAHTE KONTROL
-  showMessage("Giriş başarısız (DB bağlanmadı)", "error");
-}
+  const ref = doc(db, "users", username);
+  const snap = await getDoc(ref);
 
-function register() {
-  const name = r_name.value.trim();
-  const emoji = r_emoji.value.trim();
-  const user = r_username.value.trim();
-  const pass = r_password.value.trim();
+  if (mode === "register") {
+    if (snap.exists()) {
+      msg.innerText = "Bu kullanıcı adı alınmış";
+      msg.classList.add("error");
+      return;
+    }
 
-  if (!name || !emoji || !user || !pass) {
-    showMessage("Boş alan bırakma", "error");
-    return;
+    await setDoc(ref, {
+      username,
+      password,
+      displayName,
+      emoji
+    });
+
+    msg.innerText = "Kayıt başarılı ✔";
+    msg.classList.add("success");
+
+  } else {
+    if (!snap.exists() || snap.data().password !== password) {
+      msg.innerText = "Kullanıcı adı veya şifre yanlış";
+      msg.classList.add("error");
+      return;
+    }
+
+    localStorage.setItem("loggedUser", JSON.stringify(snap.data()));
+    window.location = "home.html";
   }
-
-  // 🟢 ŞİMDİLİK SAHTE BAŞARI
-  showMessage("Kayıt başarılı (DB bağlanmadı)", "success");
-}
+};
 </script>
 
 </body>
