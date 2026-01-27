@@ -2,177 +2,138 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Etik • Giriş / Kayıt</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0f0f0f;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .box {
-      width: 320px;
-      background: #151515;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 40px rgba(0,0,0,.6);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 15px;
-      cursor: pointer;
-      background: #1d9bf0;
-      color: #fff;
-      margin-top: 6px;
-    }
-
-    .msg {
-      margin-top: 10px;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    .success { color: #2ecc71; }
-    .error { color: #e74c3c; }
-  </style>
+  <title>Etik Social - Giriş</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-
 <body>
 
-<div class="box">
-  <h2>Etik</h2>
-
-  <input id="username" placeholder="Kullanıcı adı" />
-  <input id="emoji" placeholder="Emoji 😀" maxlength="2" />
-  <input id="password" type="password" placeholder="Şifre" />
-
-  <button id="registerBtn">Kayıt Ol</button>
+  <!-- === GİRİŞ FORMU (arayüzü sen zaten yapmıştın, bu iskelet) === -->
+  <input id="username" placeholder="Kullanıcı adı">
+  <input id="password" type="password" placeholder="Şifre">
   <button id="loginBtn">Giriş Yap</button>
 
-  <div id="msg" class="msg"></div>
-</div>
+  <div id="status" style="margin-top:10px;font-size:14px;"></div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  <!-- === JS === -->
+  <script type="module">
+    /* ---------------- FIREBASE ---------------- */
+    import { auth, db } from "./firebase.js";
+    import {
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import {
+      doc, getDoc
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSSFp-uBSSFp-uBSSFp-u",
-    authDomain: "etik-social.firebaseapp.com",
-    projectId: "etik-social",
-    storageBucket: "etik-social.appspot.com",
-    messagingSenderId: "358422049811",
-    appId: "1:358422049811:web:dd9506109825aaed65fbe6"
-  };
+    /* ---------------- ELEMENTLER ---------------- */
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    const status = document.getElementById("status");
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const msg = document.getElementById("msg");
-
-  function show(text, ok) {
-    msg.textContent = text;
-    msg.className = "msg " + (ok ? "success" : "error");
-  }
-
-  function fakeEmail(username) {
-    return username.toLowerCase() + "@local.etik";
-  }
-
-  async function usernameExists(username) {
-    const q = query(collection(db, "users"), where("username", "==", username));
-    const snap = await getDocs(q);
-    return !snap.empty;
-  }
-
-  document.getElementById("registerBtn").onclick = async () => {
-    const username = username.value.trim();
-    const password = password.value;
-    const emoji = emoji.value.trim() || "🙂";
-
-    if (!username || !password) {
-      show("Alanlar boş olamaz", false);
-      return;
+    function showStatus(msg, ok) {
+      status.textContent = msg;
+      status.style.color = ok ? "lime" : "red";
     }
 
-    if (await usernameExists(username)) {
-      show("Bu kullanıcı adı alınmış", false);
-      return;
+    /* ---------------- BRUTEFORCE KORUMA ---------------- */
+    const MAX_TRY = 8;
+    const MAX_VERIFY = 4;
+    const LOCK_DAYS = 4;
+
+    function now() {
+      return Date.now();
     }
 
-    try {
-      const cred = await createUserWithEmailAndPassword(
-        auth,
-        fakeEmail(username),
-        password
-      );
+    function isLocked() {
+      const until = localStorage.getItem("lockUntil");
+      return until && now() < Number(until);
+    }
 
-      await setDoc(doc(db, "users", cred.user.uid), {
-        username,
-        emoji,
-        createdAt: Date.now()
+    function lockBrowser() {
+      const until = now() + LOCK_DAYS * 24 * 60 * 60 * 1000;
+      localStorage.setItem("lockUntil", until);
+    }
+
+    function getTry() {
+      return Number(localStorage.getItem("loginTry") || 0);
+    }
+
+    function incTry() {
+      localStorage.setItem("loginTry", getTry() + 1);
+    }
+
+    function resetTry() {
+      localStorage.removeItem("loginTry");
+      localStorage.removeItem("verifyCount");
+    }
+
+    function needVerify() {
+      return getTry() >= MAX_TRY;
+    }
+
+    function verifyRobot() {
+      let count = Number(localStorage.getItem("verifyCount") || 0);
+      if (count >= MAX_VERIFY) {
+        lockBrowser();
+        return false;
+      }
+      const ok = confirm("Robot olmadığını doğrula");
+      if (!ok) {
+        localStorage.setItem("verifyCount", count + 1);
+        return false;
+      }
+      return true;
+    }
+
+    async function safeLogin(loginFn) {
+      if (isLocked()) {
+        showStatus("Bu tarayıcı geçici olarak kilitlendi.", false);
+        return;
+      }
+
+      if (needVerify()) {
+        if (!verifyRobot()) {
+          showStatus("Doğrulama başarısız.", false);
+          return;
+        }
+      }
+
+      try {
+        await loginFn();
+        resetTry();
+        showStatus("Giriş başarılı ✅", true);
+        window.location.href = "home.html";
+      } catch (e) {
+        incTry();
+        showStatus("Kullanıcı adı veya şifre yanlış", false);
+      }
+    }
+
+    /* ---------------- LOGIN ---------------- */
+    loginBtn.onclick = () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        showStatus("Boş alan bırakma", false);
+        return;
+      }
+
+      safeLogin(async () => {
+        // kullanıcı adı -> sahte email gibi kullanılıyor
+        const fakeEmail = username + "@etik.local";
+
+        await signInWithEmailAndPassword(auth, fakeEmail, password);
+
+        // kullanıcı gerçekten DB'de var mı kontrol
+        const snap = await getDoc(doc(db, "users", username));
+        if (!snap.exists()) throw new Error("user-not-found");
+
+        localStorage.setItem("loggedUser", username);
       });
-
-      show("Kayıt başarılı", true);
-      setTimeout(() => location.href = "home.html", 800);
-
-    } catch (e) {
-      show("Kayıt başarısız", false);
-    }
-  };
-
-  document.getElementById("loginBtn").onclick = async () => {
-    const username = username.value.trim();
-    const password = password.value;
-
-    if (!username || !password) {
-      show("Alanlar boş olamaz", false);
-      return;
-    }
-
-    try {
-      await signInWithEmailAndPassword(
-        auth,
-        fakeEmail(username),
-        password
-      );
-
-      show("Giriş başarılı", true);
-      setTimeout(() => location.href = "home.html", 600);
-
-    } catch (e) {
-      show("Hatalı kullanıcı adı veya şifre", false);
-    }
-  };
-</script>
+    };
+  </script>
 
 </body>
 </html>
