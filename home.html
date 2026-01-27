@@ -1,68 +1,107 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Etik Social - Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etik Social • Home</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0e0e0e;
+  color: #fff;
+}
+
+/* TOP BAR */
+.header {
+  height: 56px;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #222;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.header button {
+  background: none;
+  border: none;
+  color: #ff4c4c;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* CONTENT */
+.container {
+  padding: 16px;
+}
+
+.card {
+  background: #181818;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.username {
+  font-weight: 600;
+}
+
+.emoji {
+  margin-left: 6px;
+}
+
+.text {
+  margin-top: 8px;
+  color: #ddd;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- === ÜST BAR (arayüz senin CSS ile şekillenir) === -->
-  <div id="topBar">
-    <span id="welcome"></span>
-    <button id="logoutBtn">Çıkış</button>
+<script>
+/* 🔒 AUTH GUARD */
+const user = JSON.parse(localStorage.getItem("loggedUser"));
+if (!user) {
+  window.location.replace("index.html");
+}
+</script>
+
+<div class="header">
+  <h2>Etik Social</h2>
+  <button onclick="logout()">Çıkış</button>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="username">
+      @{{username}} <span class="emoji">😎🔥</span>
+    </div>
+    <div class="text">
+      Hoş geldin! Burası ana sayfa.
+    </div>
   </div>
 
-  <!-- === ANA ALAN === -->
-  <div id="content">
-    <h2>Ana Sayfa</h2>
-    <p>Buraya post / DM / feed gelecek</p>
-  </div>
+</div>
 
-  <!-- === JS === -->
-  <script type="module">
-    import { auth, db } from "./firebase.js";
-    import {
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-    import {
-      doc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-    /* -------- AUTH GUARD -------- */
-    const localUser = localStorage.getItem("loggedUser");
-
-    if (!localUser) {
-      window.location.replace("index.html");
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        localStorage.removeItem("loggedUser");
-        window.location.replace("index.html");
-        return;
-      }
-
-      const snap = await getDoc(doc(db, "users", localUser));
-      if (!snap.exists()) {
-        localStorage.removeItem("loggedUser");
-        window.location.replace("index.html");
-        return;
-      }
-
-      document.getElementById("welcome").textContent =
-        "Hoş geldin, " + snap.data().username;
-    });
-
-    /* -------- LOGOUT -------- */
-    document.getElementById("logoutBtn").onclick = async () => {
-      await signOut(auth);
-      localStorage.removeItem("loggedUser");
-      window.location.replace("index.html");
-    };
-  </script>
+<script>
+function logout() {
+  localStorage.removeItem("loggedUser");
+  window.location.replace("index.html");
+}
+</script>
 
 </body>
 </html>
