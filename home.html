@@ -1,141 +1,107 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Etik Social</title>
+<meta charset="UTF-8">
+<title>Sohbet Uygulaması</title>
 
-  <!-- AUTH GUARD -->
-  <script>
-    if (!localStorage.getItem("loggedUser")) {
-      window.location.replace("index.html");
-    }
-  </script>
+<!-- AUTH GUARD -->
+<script>
+  if (!localStorage.getItem("loggedUser")) {
+    window.location.href = "index.html";
+  }
+</script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #0b1220, #05070f);
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+  }
 
-    body {
-      margin: 0;
-      background: #0f0f0f;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+  /* SABİT UYGULAMA ALANI */
+  .app {
+    width: 360px;   /* Mobil genişliği */
+    min-height: 100vh;
+    padding: 20px 15px 80px;
+  }
 
-    /* HEADER */
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      height: 55px;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 15px;
-      border-bottom: 1px solid #222;
-    }
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
 
-    header .logo {
-      font-weight: bold;
-      font-size: 18px;
-    }
+  .card {
+    background: #1a2236;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
 
-    header .icons span {
-      margin-left: 15px;
-      cursor: pointer;
-      font-size: 18px;
-    }
+  .card:hover {
+    background: #222c45;
+  }
 
-    /* FEED */
-    main {
-      padding-top: 65px;
-      max-width: 500px;
-      margin: auto;
-    }
+  .card span {
+    margin-left: 12px;
+  }
 
-    .post {
-      background: #1a1a1a;
-      border-radius: 10px;
-      margin: 12px;
-      padding: 12px;
-    }
+  /* ALT MENÜ */
+  .bottom {
+    position: fixed;
+    bottom: 0;
+    width: 360px;
+    height: 60px;
+    background: #0b1220;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #222;
+  }
 
-    .post .user {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+  .bottom div {
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+  }
 
-    .post .content {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .post .actions span {
-      margin-right: 15px;
-      cursor: pointer;
-    }
-
-    /* FOOTER */
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 55px;
-      background: #000;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #222;
-    }
-
-    footer span {
-      font-size: 20px;
-      cursor: pointer;
-    }
-  </style>
+  .bottom div.active {
+    color: #4da3ff;
+  }
+</style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo">Etik</div>
-  <div class="icons">
-    <span>➕</span>
-    <span>💬</span>
-  </div>
-</header>
+<div class="app">
+  <h1>🔥 Sohbet Uygulaması</h1>
 
-<main>
-  <div class="post">
-    <div class="user">@kullanici1</div>
-    <div class="content">Etik Social test yayında 🚀</div>
-    <div class="actions">
-      <span>❤️</span>
-      <span>💬</span>
-      <span>🔗</span>
-    </div>
+  <div class="card" onclick="alert('DM yakında')">
+    💬 <span>DM</span>
   </div>
 
-  <div class="post">
-    <div class="user">@kullanici2</div>
-    <div class="content">Minimal, hızlı, sade.</div>
-    <div class="actions">
-      <span>❤️</span>
-      <span>💬</span>
-      <span>🔗</span>
-    </div>
+  <div class="card" onclick="alert('Gruplar yakında')">
+    👥 <span>Gruplar</span>
   </div>
-</main>
 
-<footer>
-  <span>🏠</span>
-  <span>🔍</span>
-  <span>➕</span>
-  <span>❤️</span>
-  <span>👤</span>
-</footer>
+  <div class="card" onclick="alert('Anonim yakında')">
+    🕵️ <span>Anonim Mesaj</span>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="active">🏠<br>Ana</div>
+  <div>💬<br>DM</div>
+  <div>🔍<br>Ara</div>
+  <div>👤<br>Profil</div>
+</div>
 
 </body>
 </html>
