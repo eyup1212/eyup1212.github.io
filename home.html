@@ -1,91 +1,141 @@
-<script>
-if (!localStorage.getItem("loggedUser")) {
-  window.location.replace("index.html");
-}
-</script>
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <title>Etik Social</title>
+
+  <!-- AUTH GUARD -->
+  <script>
+    if (!localStorage.getItem("loggedUser")) {
+      window.location.replace("index.html");
+    }
+  </script>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background: #111;
+      margin: 0;
+      background: #0f0f0f;
       color: #fff;
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
     }
-    .box {
-      background: #1c1c1c;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-    }
-    input, button {
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
       width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
+      height: 55px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 15px;
+      border-bottom: 1px solid #222;
     }
-    button {
-      background: #4caf50;
-      color: #fff;
+
+    header .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    header .icons span {
+      margin-left: 15px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    /* FEED */
+    main {
+      padding-top: 65px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .post {
+      background: #1a1a1a;
+      border-radius: 10px;
+      margin: 12px;
+      padding: 12px;
+    }
+
+    .post .user {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .post .content {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .post .actions span {
+      margin-right: 15px;
       cursor: pointer;
     }
-    h2 {
-      text-align: center;
+
+    /* FOOTER */
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 55px;
+      background: #000;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #222;
+    }
+
+    footer span {
+      font-size: 20px;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
 
-  <div class="box">
-    <h2>Kayıt Ol</h2>
-    <input type="text" id="registerUsername" placeholder="Kullanıcı adı">
-    <input type="password" id="registerPassword" placeholder="Şifre">
-    <button onclick="register()">Kayıt Ol</button>
+<header>
+  <div class="logo">Etik</div>
+  <div class="icons">
+    <span>➕</span>
+    <span>💬</span>
+  </div>
+</header>
 
-    <hr style="margin:15px 0">
-
-    <h2>Giriş Yap</h2>
-    <input type="text" id="loginUsername" placeholder="Kullanıcı adı">
-    <input type="password" id="loginPassword" placeholder="Şifre">
-    <button onclick="login()">Giriş Yap</button>
+<main>
+  <div class="post">
+    <div class="user">@kullanici1</div>
+    <div class="content">Etik Social test yayında 🚀</div>
+    <div class="actions">
+      <span>❤️</span>
+      <span>💬</span>
+      <span>🔗</span>
+    </div>
   </div>
 
-  <!-- 🔥 FIREBASE BAĞLANTISI -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  <div class="post">
+    <div class="user">@kullanici2</div>
+    <div class="content">Minimal, hızlı, sade.</div>
+    <div class="actions">
+      <span>❤️</span>
+      <span>💬</span>
+      <span>🔗</span>
+    </div>
+  </div>
+</main>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBSSFp-uB8XQdpCFS5jokwqknBK6oXMc",
-      authDomain: "etik-social.firebaseapp.com",
-      projectId: "etik-social",
-      storageBucket: "etik-social.firebasestorage.app",
-      messagingSenderId: "358422049811",
-      appId: "1:358422049811:web:bda144f9d443b2db65fb6e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.db = db;
-
-    // Şimdilik boş — sonraki adımda dolduracağız
-    window.register = () => {
-      alert("Kayıt fonksiyonu birazdan geliyor 🚀");
-    };
-
-    window.login = () => {
-      alert("Giriş fonksiyonu birazdan geliyor 🚀");
-    };
-  </script>
+<footer>
+  <span>🏠</span>
+  <span>🔍</span>
+  <span>➕</span>
+  <span>❤️</span>
+  <span>👤</span>
+</footer>
 
 </body>
 </html>
