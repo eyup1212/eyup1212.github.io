@@ -1,118 +1,68 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Etik • Ana Sayfa</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0f0f0f;
-      color: #fff;
-    }
-
-    header {
-      height: 56px;
-      background: #151515;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      border-bottom: 1px solid #222;
-    }
-
-    header h1 {
-      font-size: 18px;
-      margin: 0;
-    }
-
-    header button {
-      background: none;
-      border: none;
-      color: #e74c3c;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    .card {
-      background: #151515;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Etik Social - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-
 <body>
 
-<header>
-  <h1 id="userInfo">Etik</h1>
-  <button id="logoutBtn">Çıkış</button>
-</header>
-
-<main>
-  <div class="card">
-    <h3>Hoş geldin 👋</h3>
-    <p>Burası ana sayfa. DM, post, grup vs. buraya eklenecek.</p>
+  <!-- === ÜST BAR (arayüz senin CSS ile şekillenir) === -->
+  <div id="topBar">
+    <span id="welcome"></span>
+    <button id="logoutBtn">Çıkış</button>
   </div>
 
-  <div class="card">
-    <p>Şu an sistem:</p>
-    <ul>
-      <li>✅ Gerçek Firebase Auth</li>
-      <li>✅ URL atlama engeli</li>
-      <li>✅ Lokal görünümlü login</li>
-    </ul>
+  <!-- === ANA ALAN === -->
+  <div id="content">
+    <h2>Ana Sayfa</h2>
+    <p>Buraya post / DM / feed gelecek</p>
   </div>
-</main>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  <!-- === JS === -->
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import {
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSSFp-uBSSFp-uBSSFp-u",
-    authDomain: "etik-social.firebaseapp.com",
-    projectId: "etik-social",
-    storageBucket: "etik-social.appspot.com",
-    messagingSenderId: "358422049811",
-    appId: "1:358422049811:web:dd9506109825aaed65fbe6"
-  };
+    /* -------- AUTH GUARD -------- */
+    const localUser = localStorage.getItem("loggedUser");
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const userInfo = document.getElementById("userInfo");
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  // 🔐 AUTH GUARD
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      location.replace("index.html");
-      return;
+    if (!localUser) {
+      window.location.replace("index.html");
     }
 
-    // Kullanıcı bilgisi çek
-    const snap = await getDoc(doc(db, "users", user.uid));
-    if (snap.exists()) {
-      const data = snap.data();
-      userInfo.textContent = `${data.emoji} ${data.username}`;
-    }
-  });
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        localStorage.removeItem("loggedUser");
+        window.location.replace("index.html");
+        return;
+      }
 
-  logoutBtn.onclick = async () => {
-    await signOut(auth);
-    location.href = "index.html";
-  };
-</script>
+      const snap = await getDoc(doc(db, "users", localUser));
+      if (!snap.exists()) {
+        localStorage.removeItem("loggedUser");
+        window.location.replace("index.html");
+        return;
+      }
+
+      document.getElementById("welcome").textContent =
+        "Hoş geldin, " + snap.data().username;
+    });
+
+    /* -------- LOGOUT -------- */
+    document.getElementById("logoutBtn").onclick = async () => {
+      await signOut(auth);
+      localStorage.removeItem("loggedUser");
+      window.location.replace("index.html");
+    };
+  </script>
 
 </body>
 </html>
