@@ -1,172 +1,177 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Giriş / Kayıt</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Etik • Giriş / Kayıt</title>
 
-<style>
-* {
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
+    .box {
+      width: 320px;
+      background: #151515;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0,0,0,.6);
+    }
 
-.card {
-  width: 360px;
-  background: #111;
-  padding: 24px;
-  border-radius: 14px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.6);
-}
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-h2 {
-  text-align: center;
-  margin-bottom: 16px;
-}
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: none;
-  background: #222;
-  color: #fff;
-  font-size: 15px;
-}
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      background: #1d9bf0;
+      color: #fff;
+      margin-top: 6px;
+    }
 
-button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #4f9cff;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-}
+    .msg {
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
 
-button:hover {
-  background: #3a86e0;
-}
-
-.switch {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 14px;
-  color: #aaa;
-  cursor: pointer;
-}
-
-.switch span {
-  color: #4f9cff;
-}
-
-.hidden {
-  display: none;
-}
-</style>
+    .success { color: #2ecc71; }
+    .error { color: #e74c3c; }
+  </style>
 </head>
 
 <body>
 
-<div class="card" id="registerCard">
-  <h2>Kayıt Ol</h2>
+<div class="box">
+  <h2>Etik</h2>
 
-  <input id="reg_name" placeholder="Görünen isim">
-  <input id="reg_emoji" placeholder="Emoji 😎🔥💀">
-  <input id="reg_user" placeholder="İsim etiketi (@eyup)">
-  <input id="reg_pass" type="password" placeholder="Şifre">
+  <input id="username" placeholder="Kullanıcı adı" />
+  <input id="emoji" placeholder="Emoji 😀" maxlength="2" />
+  <input id="password" type="password" placeholder="Şifre" />
 
-  <button onclick="register()">Devam Et</button>
+  <button id="registerBtn">Kayıt Ol</button>
+  <button id="loginBtn">Giriş Yap</button>
 
-  <div class="switch" onclick="showLogin()">
-    Zaten hesabın var mı? <span>Giriş yap</span>
-  </div>
+  <div id="msg" class="msg"></div>
 </div>
 
-<div class="card hidden" id="loginCard">
-  <h2>Giriş Yap</h2>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, query, where, getDocs, collection } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  <input id="log_user" placeholder="İsim etiketi (@eyup)">
-  <input id="log_pass" type="password" placeholder="Şifre">
-
-  <button onclick="login()">Devam Et</button>
-
-  <div class="switch" onclick="showRegister()">
-    Hesabın yok mu? <span>Kayıt ol</span>
-  </div>
-</div>
-
-<script>
-function showLogin() {
-  document.getElementById("registerCard").classList.add("hidden");
-  document.getElementById("loginCard").classList.remove("hidden");
-}
-
-function showRegister() {
-  document.getElementById("loginCard").classList.add("hidden");
-  document.getElementById("registerCard").classList.remove("hidden");
-}
-
-// KAYIT
-function register() {
-  const name = reg_name.value.trim();
-  const emoji = reg_emoji.value.trim();
-  const user = reg_user.value.trim();
-  const pass = reg_pass.value;
-
-  if (!name || !user || !pass) {
-    alert("Boş alan bırakma");
-    return;
-  }
-
-  if (localStorage.getItem("user_" + user)) {
-    alert("Bu kullanıcı adı zaten var");
-    return;
-  }
-
-  const data = {
-    name,
-    emoji,
-    pass
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSSFp-uBSSFp-uBSSFp-u",
+    authDomain: "etik-social.firebaseapp.com",
+    projectId: "etik-social",
+    storageBucket: "etik-social.appspot.com",
+    messagingSenderId: "358422049811",
+    appId: "1:358422049811:web:dd9506109825aaed65fbe6"
   };
 
-  localStorage.setItem("user_" + user, JSON.stringify(data));
-  alert("Kayıt başarılı");
-  showLogin();
-}
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-// GİRİŞ
-function login() {
-  const user = log_user.value.trim();
-  const pass = log_pass.value;
+  const msg = document.getElementById("msg");
 
-  const data = localStorage.getItem("user_" + user);
-  if (!data) {
-    alert("Kullanıcı bulunamadı");
-    return;
+  function show(text, ok) {
+    msg.textContent = text;
+    msg.className = "msg " + (ok ? "success" : "error");
   }
 
-  const obj = JSON.parse(data);
-  if (obj.pass !== pass) {
-    alert("Şifre yanlış");
-    return;
+  function fakeEmail(username) {
+    return username.toLowerCase() + "@local.etik";
   }
 
-  localStorage.setItem("loggedUser", user);
-  window.location.href = "home.html";
-}
+  async function usernameExists(username) {
+    const q = query(collection(db, "users"), where("username", "==", username));
+    const snap = await getDocs(q);
+    return !snap.empty;
+  }
+
+  document.getElementById("registerBtn").onclick = async () => {
+    const username = username.value.trim();
+    const password = password.value;
+    const emoji = emoji.value.trim() || "🙂";
+
+    if (!username || !password) {
+      show("Alanlar boş olamaz", false);
+      return;
+    }
+
+    if (await usernameExists(username)) {
+      show("Bu kullanıcı adı alınmış", false);
+      return;
+    }
+
+    try {
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        fakeEmail(username),
+        password
+      );
+
+      await setDoc(doc(db, "users", cred.user.uid), {
+        username,
+        emoji,
+        createdAt: Date.now()
+      });
+
+      show("Kayıt başarılı", true);
+      setTimeout(() => location.href = "home.html", 800);
+
+    } catch (e) {
+      show("Kayıt başarısız", false);
+    }
+  };
+
+  document.getElementById("loginBtn").onclick = async () => {
+    const username = username.value.trim();
+    const password = password.value;
+
+    if (!username || !password) {
+      show("Alanlar boş olamaz", false);
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        fakeEmail(username),
+        password
+      );
+
+      show("Giriş başarılı", true);
+      setTimeout(() => location.href = "home.html", 600);
+
+    } catch (e) {
+      show("Hatalı kullanıcı adı veya şifre", false);
+    }
+  };
 </script>
 
 </body>
