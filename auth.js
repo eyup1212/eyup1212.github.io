@@ -1,28 +1,20 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+// auth.js
+import { auth, db } from "./firebase.js";
+
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
-/* 🔥 FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "etik-social.firebaseapp.com",
-  projectId: "etik-social",
-  storageBucket: "etik-social.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
-};
+import {
+  doc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-/* 🔌 INIT */
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-/* 📦 VIEWLER */
+// ELEMENTLER
 const loginView = document.getElementById("loginView");
 const registerView = document.getElementById("registerView");
 const homeView = document.getElementById("homeView");
@@ -31,86 +23,98 @@ const loginUser = document.getElementById("loginUser");
 const loginPass = document.getElementById("loginPass");
 const loginMsg = document.getElementById("loginMsg");
 
-const regUser = document.getElementById("regUser");
-const regPass = document.getElementById("regPass");
-const regMsg = document.getElementById("regMsg");
+const registerUser = document.getElementById("registerUser");
+const registerPass = document.getElementById("registerPass");
+const registerMsg = document.getElementById("registerMsg");
 
 const welcome = document.getElementById("welcome");
 
-/* 👁️ VIEW GEÇİŞ */
-window.showRegister = () => {
-  loginView.classList.add("hidden");
-  registerView.classList.remove("hidden");
-};
+// RANDOM EMOJI
+function randomEmoji() {
+  const emojis = ["😎", "🔥", "🚀", "👑", "✨", "😏", "💎"];
+  return emojis[Math.floor(Math.random() * emojis.length)];
+}
 
-window.showLogin = () => {
-  registerView.classList.add("hidden");
-  loginView.classList.remove("hidden");
-};
-
-/* 📝 REGISTER */
+// REGISTER
 window.register = async () => {
-  const user = regUser.value.trim();
-  const pass = regPass.value.trim();
+  const username = registerUser.value.trim();
+  const pass = registerPass.value.trim();
 
-  if (!user || !pass) {
-    regMsg.textContent = "Boş alan bırakma";
-    regMsg.className = "msg error";
+  if (!username || !pass) {
+    registerMsg.textContent = "Boş alan bırakma";
     return;
   }
 
-  const fakeEmail = `${user}@etik.local`;
+  const fakeEmail = `${username}@etik.local`;
 
   try {
-    await createUserWithEmailAndPassword(auth, fakeEmail, pass);
-    regMsg.textContent = "Kayıt başarılı";
-    regMsg.className = "msg success";
+    const cred = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
+    const uid = cred.user.uid;
+
+    await setDoc(doc(db, "users", uid), {
+      username: username,
+      uid: uid,
+      emoji: randomEmoji(),
+      createdAt: Date.now()
+    });
+
+    registerMsg.textContent = "Kayıt başarılı, giriş yapabilirsin";
+    setTimeout(() => showLogin(), 1000);
+
   } catch (e) {
-    regMsg.textContent = e.message;
-    regMsg.className = "msg error";
+    registerMsg.textContent = e.message;
   }
 };
 
-/* 🔐 LOGIN */
+// LOGIN
 window.login = async () => {
-  const user = loginUser.value.trim();
+  const username = loginUser.value.trim();
   const pass = loginPass.value.trim();
-
-  if (!user || !pass) {
-    loginMsg.textContent = "Eksik bilgi";
-    loginMsg.className = "msg error";
-    return;
-  }
-
-  const fakeEmail = `${user}@etik.local`;
+  const fakeEmail = `${username}@etik.local`;
 
   try {
     await signInWithEmailAndPassword(auth, fakeEmail, pass);
-    // ekran değişimini SADECE onAuthStateChanged yapar
   } catch (e) {
     loginMsg.textContent = "Kullanıcı adı veya şifre yanlış";
-    loginMsg.className = "msg error";
   }
 };
 
-/* 🚪 LOGOUT */
+// LOGOUT
 window.logout = async () => {
   await signOut(auth);
 };
 
-/* 🧠 SESSION KONTROL (URL BYPASS KAPALI) */
-onAuthStateChanged(auth, (user) => {
+// AUTH STATE (EN KRİTİK KISIM)
+onAuthStateChanged(auth, async (user) => {
   if (user) {
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (!snap.exists()) {
+      await signOut(auth);
+      return;
+    }
+
+    const data = snap.data();
+    welcome.textContent = `Hoş geldin ${data.username} ${data.emoji}`;
+
     loginView.classList.add("hidden");
     registerView.classList.add("hidden");
     homeView.classList.remove("hidden");
 
-    const username = user.email.split("@")[0];
-    welcome.textContent = `Hoş geldin ${username}`;
   } else {
     homeView.classList.add("hidden");
     registerView.classList.add("hidden");
     loginView.classList.remove("hidden");
   }
 });
-</script>
+
+// VIEW SWITCH
+window.showLogin = () => {
+  registerView.classList.add("hidden");
+  loginView.classList.remove("hidden");
+};
+
+window.showRegister = () => {
+  loginView.classList.add("hidden");
+  registerView.classList.remove("hidden");
+};
