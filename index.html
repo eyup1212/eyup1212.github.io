@@ -2,10 +2,12 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Etik Sosyal</title>
+<title>Etik Social</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+* { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -21,11 +23,12 @@ body {
   width: 320px;
   background: #111;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 h2 {
   text-align: center;
+  margin-bottom: 10px;
 }
 
 input, button {
@@ -34,6 +37,7 @@ input, button {
   margin-top: 10px;
   border-radius: 6px;
   border: none;
+  outline: none;
 }
 
 button {
@@ -49,12 +53,12 @@ button {
   font-size: 14px;
 }
 
-.error { color: red; }
-.success { color: lime; }
+.error { color: #ff4d4d; }
+.success { color: #4dff4d; }
 
 .link {
-  text-align: center;
   margin-top: 10px;
+  text-align: center;
   color: #1da1f2;
   cursor: pointer;
 }
@@ -88,12 +92,12 @@ button {
 
 <!-- HOME -->
 <div class="box hidden" id="homeView">
-  <h2>🏠 Ana Sayfa</h2>
+  <h2>Ana Sayfa</h2>
   <p id="welcome"></p>
   <button onclick="logout()">Çıkış Yap</button>
 </div>
 
-<!-- 🔥 TEK JS DOSYASI -->
+<!-- 🔥 TEK VE GERÇEK JS -->
 <script type="module" src="./auth.js"></script>
 
 </body>
