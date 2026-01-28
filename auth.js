@@ -1,23 +1,25 @@
-import { auth, db } from "./firebase.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
+  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   signOut
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import {
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+// 🔥 Firebase config (SENİN PROJE)
+const firebaseConfig = {
+  apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
+  authDomain: "etik-social.firebaseapp.com",
+  projectId: "etik-social",
+  storageBucket: "etik-social.firebasestorage.app",
+  messagingSenderId: "358422049811",
+  appId: "1:358422049811:web:dd9506109825aaed65fbe6"
+};
 
-// ELEMENTLER
-const loginView = document.getElementById("loginView");
-const registerView = document.getElementById("registerView");
-const homeView = document.getElementById("homeView");
-const welcome = document.getElementById("welcome");
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-// GLOBAL
+// 🔁 Görünüm geçişleri
 window.showRegister = () => {
   loginView.classList.add("hidden");
   registerView.classList.remove("hidden");
@@ -28,63 +30,52 @@ window.showLogin = () => {
   loginView.classList.remove("hidden");
 };
 
-// REGISTER
+// 📝 REGISTER
 window.register = async () => {
-  const username = regUser.value;
-  const password = regPass.value;
-  const emoji = regEmoji.value || "🙂";
+  const user = regUser.value.trim();
+  const pass = regPass.value.trim();
 
-  if (!username || !password) {
-    regMsg.innerHTML = "<span class='error'>Eksik bilgi</span>";
+  if (!user || !pass) {
+    regMsg.textContent = "Boş alan bırakma";
+    regMsg.className = "msg error";
     return;
   }
 
-  const fakeEmail = username + "@etik.local";
+  // 🔑 Fake email (lokal giriş için)
+  const fakeEmail = `${user}@etik.local`;
 
   try {
-    const userCred = await createUserWithEmailAndPassword(
-      auth,
-      fakeEmail,
-      password
-    );
-
-    await setDoc(doc(db, "users", userCred.user.uid), {
-      username,
-      emoji
-    });
-
-    regMsg.innerHTML = "<span class='success'>Kayıt başarılı</span>";
+    await createUserWithEmailAndPassword(auth, fakeEmail, pass);
+    regMsg.textContent = "Kayıt başarılı, giriş yapabilirsin";
+    regMsg.className = "msg success";
+    setTimeout(showLogin, 1000);
   } catch (e) {
-    regMsg.innerHTML = "<span class='error'>" + e.message + "</span>";
+    regMsg.textContent = e.message;
+    regMsg.className = "msg error";
   }
 };
 
-// LOGIN
+// 🔐 LOGIN
 window.login = async () => {
-  const username = loginUser.value;
-  const password = loginPass.value;
+  const user = loginUser.value.trim();
+  const pass = loginPass.value.trim();
 
-  const fakeEmail = username + "@etik.local";
+  const fakeEmail = `${user}@etik.local`;
 
   try {
-    await signInWithEmailAndPassword(auth, fakeEmail, password);
+    await signInWithEmailAndPassword(auth, fakeEmail, pass);
+    loginView.classList.add("hidden");
+    homeView.classList.remove("hidden");
+    welcome.textContent = `Hoş geldin ${user}`;
   } catch (e) {
-    loginMsg.innerHTML = "<span class='error'>Hatalı giriş</span>";
+    loginMsg.textContent = "Kullanıcı adı veya şifre yanlış";
+    loginMsg.className = "msg error";
   }
 };
 
-// AUTH STATE
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    loginView.classList.add("hidden");
-    registerView.classList.add("hidden");
-    homeView.classList.remove("hidden");
-    welcome.innerText = "Hoş geldin " + user.email.split("@")[0];
-  }
-});
-
-// LOGOUT
+// 🚪 LOGOUT
 window.logout = async () => {
   await signOut(auth);
-  location.reload();
+  homeView.classList.add("hidden");
+  loginView.classList.remove("hidden");
 };
