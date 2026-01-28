@@ -2,139 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Etik Social – Login</title>
+  <title>Auth System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
-      background:#000;
-      color:#fff;
+      background: #0f0f0f;
+      color: #fff;
       font-family: Arial, sans-serif;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     .box {
-      background:#111;
-      padding:20px;
-      border-radius:10px;
-      width:280px;
-      text-align:center;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      width: 280px;
+      text-align: center;
     }
     input, button {
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      border-radius:5px;
-      border:none;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
     }
     button {
-      background:#1da1f2;
-      color:#fff;
-      font-weight:bold;
-      cursor:pointer;
+      background: #4f46e5;
+      color: white;
+      cursor: pointer;
     }
-    .link {
-      margin-top:10px;
-      color:#1da1f2;
-      cursor:pointer;
-      display:block;
+    a {
+      color: #4f46e5;
+      cursor: pointer;
+      display: block;
+      margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="box" id="loginBox">
-  <h2>Login</h2>
-  <input id="loginEmail" type="email" placeholder="Email">
-  <input id="loginPassword" type="password" placeholder="Password">
-  <button id="loginBtn">Login</button>
-  <span class="link" id="goRegister">Create account</span>
-</div>
+  <!-- LOGIN -->
+  <div class="box" id="loginBox">
+    <h2>Login</h2>
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <a id="goRegister">Create account</a>
+  </div>
 
-<div class="box" id="registerBox" style="display:none">
-  <h2>Register</h2>
-  <input id="username" placeholder="Username">
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button id="registerBtn">Register</button>
-  <span class="link" id="goLogin">Back to login</span>
-</div>
+  <!-- REGISTER -->
+  <div class="box" id="registerBox" style="display:none">
+    <h2>Register</h2>
+    <input id="username" placeholder="Username">
+    <input id="registerEmail" type="email" placeholder="Email">
+    <input id="registerPassword" type="password" placeholder="Password">
+    <button id="registerBtn">Register</button>
+    <a id="goLogin">Back to login</a>
+  </div>
 
-<script type="module">
-  // Firebase core
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
-    authDomain: "etik-social.firebaseapp.com",
-    projectId: "etik-social",
-    storageBucket: "etik-social.firebasestorage.app",
-    messagingSenderId: "358422049811",
-    appId: "1:358422049811:web:bda144f9d443b2db65fbe6"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
+      authDomain: "etik-social.firebaseapp.com",
+      projectId: "etik-social",
+      storageBucket: "etik-social.firebasestorage.app",
+      messagingSenderId: "358422049811",
+      appId: "1:358422049811:web:bda144f9d443b2db65fbe6"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  // UI switch
-  const loginBox = document.getElementById("loginBox");
-  const registerBox = document.getElementById("registerBox");
+    const loginBox = document.getElementById("loginBox");
+    const registerBox = document.getElementById("registerBox");
 
-  document.getElementById("goRegister").onclick = () => {
-    loginBox.style.display = "none";
-    registerBox.style.display = "block";
-  };
+    document.getElementById("goRegister").onclick = () => {
+      loginBox.style.display = "none";
+      registerBox.style.display = "block";
+    };
 
-  document.getElementById("goLogin").onclick = () => {
-    registerBox.style.display = "none";
-    loginBox.style.display = "block";
-  };
+    document.getElementById("goLogin").onclick = () => {
+      registerBox.style.display = "none";
+      loginBox.style.display = "block";
+    };
 
-  // Register
-  document.getElementById("registerBtn").onclick = async () => {
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    document.getElementById("registerBtn").onclick = async () => {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value;
 
-    if (!username || !email || !password) {
-      alert("Fill all fields");
-      return;
-    }
+      if (!username || !email || !password) {
+        alert("Fill all fields");
+        return;
+      }
 
-    try {
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCred.user.uid;
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCred.user.uid;
 
-      await setDoc(doc(db, "users", uid), {
-        username: username,
-        email: email,
-        createdAt: serverTimestamp()
-      });
+        await setDoc(doc(db, "users", uid), {
+          username: username,
+          email: email,
+          createdAt: new Date()
+        });
 
-      alert("Registered successfully");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+        alert("Registered successfully");
+      } catch (err) {
+        alert(err.message);
+      }
+    };
 
-  // Login
-  document.getElementById("loginBtn").onclick = async () => {
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("Login successful");
-    } catch (err) {
-      alert("Wrong email or password");
-    }
-  };
-</script>
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Login successful");
+      } catch (err) {
+        alert("Wrong email or password");
+      }
+    };
+  </script>
 
 </body>
 </html>
