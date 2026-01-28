@@ -1,7 +1,9 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, db } from "./firebase.js";
 import {
-  getFirestore,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
   collection,
   addDoc,
   query,
@@ -10,58 +12,51 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  // KENDİ CONFIG'İN
-};
+const userDiv = document.getElementById("user");
+const msgInput = document.getElementById("msg");
+const sendBtn = document.getElementById("send");
+const messages = document.getElementById("messages");
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+let currentUser = null;
 
-let currentUser;
-let chatId;
-
-onAuthStateChanged(auth, (user) => {
+// 🔐 AUTH KONTROLÜ
+onAuthStateChanged(auth, user => {
   if (!user) {
-    window.location.href = "index.html";
+    location.href = "index.html";
   } else {
     currentUser = user;
+    userDiv.innerText = "Giriş yapan: " + user.email;
+    loadMessages();
   }
 });
 
-document.getElementById("sendBtn").onclick = async () => {
-  const receiverUid = document.getElementById("receiverUid").value;
-  const text = document.getElementById("messageInput").value;
+// 📩 MESAJ GÖNDER
+sendBtn.onclick = async () => {
+  if (!msgInput.value.trim()) return;
 
-  if (!receiverUid || !text) return;
+  await addDoc(collection(db, "messages"), {
+    text: msgInput.value,
+    uid: currentUser.uid,
+    email: currentUser.email,
+    createdAt: serverTimestamp()
+  });
 
-  chatId = [currentUser.uid, receiverUid].sort().join("_");
-
-  await addDoc(
-    collection(db, "chats", chatId, "messages"),
-    {
-      senderId: currentUser.uid,
-      text,
-      createdAt: serverTimestamp()
-    }
-  );
-
-  document.getElementById("messageInput").value = "";
-  listenMessages();
+  msgInput.value = "";
 };
 
-function listenMessages() {
+// 📥 MESAJLARI ÇEK
+function loadMessages() {
   const q = query(
-    collection(db, "chats", chatId, "messages"),
+    collection(db, "messages"),
     orderBy("createdAt")
   );
 
-  onSnapshot(q, (snapshot) => {
-    const box = document.getElementById("messages");
-    box.innerHTML = "";
-    snapshot.forEach((doc) => {
-      const msg = doc.data();
-      box.innerHTML += `<p><b>${msg.senderId}</b>: ${msg.text}</p>`;
+  onSnapshot(q, snap => {
+    messages.innerHTML = "";
+    snap.forEach(doc => {
+      const li = document.createElement("li");
+      li.innerText = doc.data().email + ": " + doc.data().text;
+      messages.appendChild(li);
     });
   });
 }
