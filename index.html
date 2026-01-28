@@ -1,149 +1,139 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Medyax • Giriş</title>
+  <title>Login / Register</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // 🔥 BURAYI KENDİ firebase.js İÇİNDEKİYLE AYNI YAP
-    const firebaseConfig = {
-      apiKey: "API_KEY",
-      authDomain: "PROJECT_ID.firebaseapp.com",
-      projectId: "PROJECT_ID",
-      storageBucket: "PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // DOM
-    const loginBox = document.getElementById("loginBox");
-    const registerBox = document.getElementById("registerBox");
-
-    document.getElementById("goRegister").onclick = () => {
-      loginBox.style.display = "none";
-      registerBox.style.display = "block";
-    };
-
-    document.getElementById("goLogin").onclick = () => {
-      registerBox.style.display = "none";
-      loginBox.style.display = "block";
-    };
-
-    // KAYIT
-    document.getElementById("registerBtn").onclick = async () => {
-      const username = document.getElementById("rUsername").value.trim();
-      const emoji = document.getElementById("rEmoji").value.trim();
-      const email = document.getElementById("rEmail").value.trim();
-      const password = document.getElementById("rPassword").value;
-
-      if (!username || !emoji || !email || !password) {
-        alert("Tüm alanları doldur");
-        return;
-      }
-
-      try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = userCred.user.uid;
-
-        await setDoc(doc(db, "users", uid), {
-          username: username,
-          emoji: emoji,
-          uid: uid,
-          createdAt: Date.now()
-        });
-
-        alert("Kayıt başarılı 🔥");
-        window.location.href = "home.html";
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // GİRİŞ
-    document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("lEmail").value.trim();
-      const password = document.getElementById("lPassword").value;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html";
-      } catch (err) {
-        alert("Email veya şifre yanlış");
-      }
-    };
-  </script>
 
   <style>
     body {
-      background:#000;
-      color:#fff;
-      font-family:Arial;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
+      background: #0f0f0f;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     .box {
-      background:#111;
-      padding:20px;
-      border-radius:10px;
-      width:280px;
-      text-align:center;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      width: 280px;
+      text-align: center;
     }
     input, button {
-      width:100%;
-      margin-top:10px;
-      padding:10px;
-      border:none;
-      border-radius:5px;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
     }
     button {
-      background:#1da1f2;
-      color:#fff;
-      font-weight:bold;
+      background: #4f46e5;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
     }
     a {
-      color:#1da1f2;
-      cursor:pointer;
-      display:block;
-      margin-top:10px;
+      color: #4f46e5;
+      cursor: pointer;
+      display: block;
+      margin-top: 10px;
     }
   </style>
 </head>
-
 <body>
 
-  <!-- GİRİŞ -->
-  <div class="box" id="loginBox">
-    <h2>Giriş Yap</h2>
-    <input id="lEmail" placeholder="Email" />
-    <input id="lPassword" type="password" placeholder="Şifre" />
-    <button id="loginBtn">Giriş Yap</button>
-    <a id="goRegister">Kayıt Ol</a>
-  </div>
+<div class="box" id="loginBox">
+  <h2>Login</h2>
+  <input id="loginEmail" type="email" placeholder="Email">
+  <input id="loginPassword" type="password" placeholder="Password">
+  <button id="loginBtn">Login</button>
+  <a id="goRegister">Create account</a>
+</div>
 
-  <!-- KAYIT -->
-  <div class="box" id="registerBox" style="display:none">
-    <h2>Kayıt Ol</h2>
-    <input id="rUsername" placeholder="Kullanıcı adı" />
-    <input id="rEmoji" placeholder="Emoji 😎🔥" />
-    <input id="rEmail" placeholder="Email" />
-    <input id="rPassword" type="password" placeholder="Şifre" />
-    <button id="registerBtn">Kayıt Ol</button>
-    <a id="goLogin">Geri dön</a>
-  </div>
+<div class="box" id="registerBox" style="display:none;">
+  <h2>Register</h2>
+  <input id="username" type="text" placeholder="Username">
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button id="registerBtn">Register</button>
+  <a id="goLogin">Back to login</a>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, setDoc, doc, serverTimestamp } 
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔥 BURAYI FIREBASE'DEN DOLDUR
+  const firebaseConfig = {
+    apiKey: "API_KEY",
+    authDomain: "PROJECT_ID.firebaseapp.com",
+    projectId: "PROJECT_ID",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loginBox = document.getElementById("loginBox");
+  const registerBox = document.getElementById("registerBox");
+
+  document.getElementById("goRegister").onclick = () => {
+    loginBox.style.display = "none";
+    registerBox.style.display = "block";
+  };
+
+  document.getElementById("goLogin").onclick = () => {
+    registerBox.style.display = "none";
+    loginBox.style.display = "block";
+  };
+
+  // REGISTER
+  document.getElementById("registerBtn").onclick = async () => {
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!username || !email || !password) {
+      alert("Fill all fields");
+      return;
+    }
+
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCred.user.uid;
+
+      await setDoc(doc(db, "users", uid), {
+        username: username,
+        email: email,
+        createdAt: serverTimestamp()
+      });
+
+      alert("Registration successful");
+      location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // LOGIN
+  document.getElementById("loginBtn").onclick = async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Login successful");
+    } catch (err) {
+      alert("Wrong email or password");
+    }
+  };
+</script>
 
 </body>
 </html>
