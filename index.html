@@ -2,47 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login / Register</title>
+  <title>Etik Social – Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <style>
     body {
-      background: #0f0f0f;
-      color: #fff;
+      background:#000;
+      color:#fff;
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
     }
     .box {
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      width: 280px;
-      text-align: center;
+      background:#111;
+      padding:20px;
+      border-radius:10px;
+      width:280px;
+      text-align:center;
     }
     input, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+      border-radius:5px;
+      border:none;
     }
     button {
-      background: #4f46e5;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+      background:#1da1f2;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
     }
-    a {
-      color: #4f46e5;
-      cursor: pointer;
-      display: block;
-      margin-top: 10px;
+    .link {
+      margin-top:10px;
+      color:#1da1f2;
+      cursor:pointer;
+      display:block;
     }
   </style>
 </head>
+
 <body>
 
 <div class="box" id="loginBox">
@@ -50,36 +50,38 @@
   <input id="loginEmail" type="email" placeholder="Email">
   <input id="loginPassword" type="password" placeholder="Password">
   <button id="loginBtn">Login</button>
-  <a id="goRegister">Create account</a>
+  <span class="link" id="goRegister">Create account</span>
 </div>
 
-<div class="box" id="registerBox" style="display:none;">
+<div class="box" id="registerBox" style="display:none">
   <h2>Register</h2>
-  <input id="username" type="text" placeholder="Username">
+  <input id="username" placeholder="Username">
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button id="registerBtn">Register</button>
-  <a id="goLogin">Back to login</a>
+  <span class="link" id="goLogin">Back to login</span>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, setDoc, doc, serverTimestamp } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  // Firebase core
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  // 🔥 BURAYI FIREBASE'DEN DOLDUR
   const firebaseConfig = {
-    apiKey: "API_KEY",
-    authDomain: "PROJECT_ID.firebaseapp.com",
-    projectId: "PROJECT_ID",
+    apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
+    authDomain: "etik-social.firebaseapp.com",
+    projectId: "etik-social",
+    storageBucket: "etik-social.firebasestorage.app",
+    messagingSenderId: "358422049811",
+    appId: "1:358422049811:web:bda144f9d443b2db65fbe6"
   };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  // UI switch
   const loginBox = document.getElementById("loginBox");
   const registerBox = document.getElementById("registerBox");
 
@@ -93,7 +95,7 @@
     loginBox.style.display = "block";
   };
 
-  // REGISTER
+  // Register
   document.getElementById("registerBtn").onclick = async () => {
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -114,14 +116,13 @@
         createdAt: serverTimestamp()
       });
 
-      alert("Registration successful");
-      location.reload();
+      alert("Registered successfully");
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // LOGIN
+  // Login
   document.getElementById("loginBtn").onclick = async () => {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
