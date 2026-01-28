@@ -1,104 +1,149 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Etik Social</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Medyax • Giriş</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-* { box-sizing: border-box; }
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } 
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #000;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+    // 🔥 BURAYI KENDİ firebase.js İÇİNDEKİYLE AYNI YAP
+    const firebaseConfig = {
+      apiKey: "API_KEY",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
 
-.box {
-  width: 320px;
-  background: #111;
-  padding: 20px;
-  border-radius: 14px;
-}
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-h2 {
-  text-align: center;
-  margin-bottom: 10px;
-}
+    // DOM
+    const loginBox = document.getElementById("loginBox");
+    const registerBox = document.getElementById("registerBox");
 
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-}
+    document.getElementById("goRegister").onclick = () => {
+      loginBox.style.display = "none";
+      registerBox.style.display = "block";
+    };
 
-button {
-  background: #1da1f2;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
+    document.getElementById("goLogin").onclick = () => {
+      registerBox.style.display = "none";
+      loginBox.style.display = "block";
+    };
 
-.msg {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 14px;
-}
+    // KAYIT
+    document.getElementById("registerBtn").onclick = async () => {
+      const username = document.getElementById("rUsername").value.trim();
+      const emoji = document.getElementById("rEmoji").value.trim();
+      const email = document.getElementById("rEmail").value.trim();
+      const password = document.getElementById("rPassword").value;
 
-.error { color: #ff4d4d; }
-.success { color: #4dff4d; }
+      if (!username || !emoji || !email || !password) {
+        alert("Tüm alanları doldur");
+        return;
+      }
 
-.link {
-  margin-top: 10px;
-  text-align: center;
-  color: #1da1f2;
-  cursor: pointer;
-}
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCred.user.uid;
 
-.hidden { display: none; }
-</style>
+        await setDoc(doc(db, "users", uid), {
+          username: username,
+          emoji: emoji,
+          uid: uid,
+          createdAt: Date.now()
+        });
+
+        alert("Kayıt başarılı 🔥");
+        window.location.href = "home.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    // GİRİŞ
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("lEmail").value.trim();
+      const password = document.getElementById("lPassword").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "home.html";
+      } catch (err) {
+        alert("Email veya şifre yanlış");
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background:#000;
+      color:#fff;
+      font-family:Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+    .box {
+      background:#111;
+      padding:20px;
+      border-radius:10px;
+      width:280px;
+      text-align:center;
+    }
+    input, button {
+      width:100%;
+      margin-top:10px;
+      padding:10px;
+      border:none;
+      border-radius:5px;
+    }
+    button {
+      background:#1da1f2;
+      color:#fff;
+      font-weight:bold;
+    }
+    a {
+      color:#1da1f2;
+      cursor:pointer;
+      display:block;
+      margin-top:10px;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div class="box" id="loginView">
-  <h2>Giriş Yap</h2>
-  <input id="loginUser" placeholder="Kullanıcı adı">
-  <input id="loginPass" type="password" placeholder="Şifre">
-  <div id="loginMsg" class="msg"></div>
-  <button onclick="login()">Giriş Yap</button>
-  <div class="link" onclick="showRegister()">Kayıt ol</div>
-</div>
+  <!-- GİRİŞ -->
+  <div class="box" id="loginBox">
+    <h2>Giriş Yap</h2>
+    <input id="lEmail" placeholder="Email" />
+    <input id="lPassword" type="password" placeholder="Şifre" />
+    <button id="loginBtn">Giriş Yap</button>
+    <a id="goRegister">Kayıt Ol</a>
+  </div>
 
-<!-- REGISTER -->
-<div class="box hidden" id="registerView">
-  <h2>Kayıt Ol</h2>
-  <input id="regUser" placeholder="Kullanıcı adı">
-  <input id="regEmoji" placeholder="Emoji 😎🔥💀">
-  <input id="regPass" type="password" placeholder="Şifre">
-  <div id="regMsg" class="msg"></div>
-  <button onclick="register()">Kayıt Ol</button>
-  <div class="link" onclick="showLogin()">Geri dön</div>
-</div>
-
-<!-- HOME -->
-<div class="box hidden" id="homeView">
-  <h2>Ana Sayfa</h2>
-  <p id="welcome"></p>
-  <button onclick="logout()">Çıkış Yap</button>
-</div>
-
-<!-- 🔥 TEK VE GERÇEK JS -->
-<script type="module" src="./auth.js"></script>
+  <!-- KAYIT -->
+  <div class="box" id="registerBox" style="display:none">
+    <h2>Kayıt Ol</h2>
+    <input id="rUsername" placeholder="Kullanıcı adı" />
+    <input id="rEmoji" placeholder="Emoji 😎🔥" />
+    <input id="rEmail" placeholder="Email" />
+    <input id="rPassword" type="password" placeholder="Şifre" />
+    <button id="registerBtn">Kayıt Ol</button>
+    <a id="goLogin">Geri dön</a>
+  </div>
 
 </body>
 </html>
