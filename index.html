@@ -1,150 +1,100 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Etik Social</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Etik Sosyal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-    .box {
-      width: 320px;
-      background: #111;
-      padding: 20px;
-      border-radius: 10px;
-    }
+.box {
+  width: 320px;
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+}
 
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: none;
-    }
+h2 {
+  text-align: center;
+}
 
-    button {
-      background: #1da1f2;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: none;
+}
 
-    .msg {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 14px;
-    }
+button {
+  background: #1da1f2;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    .error { color: red; }
-    .success { color: lime; }
+.msg {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+}
 
-    .link {
-      margin-top: 10px;
-      text-align: center;
-      color: #1da1f2;
-      cursor: pointer;
-    }
+.error { color: red; }
+.success { color: lime; }
 
-    .hidden { display: none; }
-  </style>
+.link {
+  text-align: center;
+  margin-top: 10px;
+  color: #1da1f2;
+  cursor: pointer;
+}
+
+.hidden { display: none; }
+</style>
 </head>
 
 <body>
 
-  <!-- LOGIN -->
-  <div class="box" id="loginView">
-    <h2>Giriş Yap</h2>
-    <input id="loginUser" placeholder="Kullanıcı adı">
-    <input id="loginPass" type="password" placeholder="Şifre">
-    <div id="loginMsg" class="msg"></div>
-    <button onclick="login()">Giriş Yap</button>
-    <div class="link" onclick="showRegister()">Kayıt ol</div>
-  </div>
+<!-- LOGIN -->
+<div class="box" id="loginView">
+  <h2>Giriş Yap</h2>
+  <input id="loginUser" placeholder="Kullanıcı adı">
+  <input id="loginPass" type="password" placeholder="Şifre">
+  <div id="loginMsg" class="msg"></div>
+  <button onclick="login()">Giriş Yap</button>
+  <div class="link" onclick="showRegister()">Kayıt ol</div>
+</div>
 
-  <!-- REGISTER -->
-  <div class="box hidden" id="registerView">
-    <h2>Kayıt Ol</h2>
-    <input id="regUser" placeholder="Kullanıcı adı">
-    <input id="regEmoji" placeholder="Emoji 😎">
-    <input id="regPass" type="password" placeholder="Şifre">
-    <div id="regMsg" class="msg"></div>
-    <button onclick="register()">Kayıt Ol</button>
-    <div class="link" onclick="showLogin()">Geri dön</div>
-  </div>
+<!-- REGISTER -->
+<div class="box hidden" id="registerView">
+  <h2>Kayıt Ol</h2>
+  <input id="regUser" placeholder="Kullanıcı adı">
+  <input id="regEmoji" placeholder="Emoji 😎🔥💀">
+  <input id="regPass" type="password" placeholder="Şifre">
+  <div id="regMsg" class="msg"></div>
+  <button onclick="register()">Kayıt Ol</button>
+  <div class="link" onclick="showLogin()">Geri dön</div>
+</div>
 
-  <!-- HOME -->
-  <div class="box hidden" id="homeView">
-    <h2>🏠 Ana Sayfa</h2>
-    <p id="welcome"></p>
-    <button onclick="logout()">Çıkış Yap</button>
-  </div>
+<!-- HOME -->
+<div class="box hidden" id="homeView">
+  <h2>🏠 Ana Sayfa</h2>
+  <p id="welcome"></p>
+  <button onclick="logout()">Çıkış Yap</button>
+</div>
 
-<script>
-  const loginView = document.getElementById("loginView");
-  const registerView = document.getElementById("registerView");
-  const homeView = document.getElementById("homeView");
-
-  function showRegister() {
-    loginView.classList.add("hidden");
-    registerView.classList.remove("hidden");
-  }
-
-  function showLogin() {
-    registerView.classList.add("hidden");
-    loginView.classList.remove("hidden");
-  }
-
-  function login() {
-    const u = loginUser.value;
-    const p = loginPass.value;
-
-    if (!u || !p) {
-      loginMsg.innerHTML = "<span class='error'>Eksik bilgi</span>";
-      return;
-    }
-
-    localStorage.setItem("user", u);
-    loginMsg.innerHTML = "<span class='success'>Giriş başarılı</span>";
-    setTimeout(showHome, 500);
-  }
-
-  function register() {
-    if (!regUser.value || !regPass.value) {
-      regMsg.innerHTML = "<span class='error'>Eksik bilgi</span>";
-      return;
-    }
-
-    regMsg.innerHTML = "<span class='success'>Kayıt başarılı</span>";
-    setTimeout(showLogin, 800);
-  }
-
-  function showHome() {
-    loginView.classList.add("hidden");
-    registerView.classList.add("hidden");
-    homeView.classList.remove("hidden");
-    welcome.innerText = "Hoş geldin " + localStorage.getItem("user");
-  }
-
-  function logout() {
-    localStorage.removeItem("user");
-    location.reload();
-  }
-
-  // sayfa yenilenirse
-  if (localStorage.getItem("user")) {
-    showHome();
-  }
-</script>
+<!-- 🔥 TEK JS DOSYASI -->
+<script type="module" src="./auth.js"></script>
 
 </body>
 </html>
