@@ -1,26 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <title>Anonim Mesajlar</title>
 </head>
 <body>
 
-<h2>Anonim Mesajlar</h2>
+<h2>Gelen Mesajlar</h2>
+<div id="messages"></div>
 
-<div id="login">
-  <input id="name" placeholder="İsmin">
-  <button onclick="login()">Giriş</button>
-</div>
+<script>
+/* kullanıcıyı sabitle */
+if (!localStorage.getItem("user")) {
+  localStorage.setItem("user", "testuser");
+}
 
-<div id="app" style="display:none;">
-  <p><b>Linkin:</b></p>
-  <input id="link" style="width:100%" readonly>
+const user = localStorage.getItem("user");
+const key = "messages_" + user;
 
-  <h3>Mesajlar</h3>
-  <ul id="messages"></ul>
-</div>
+/* mesajları çek */
+const msgs = JSON.parse(localStorage.getItem(key) || "[]");
 
-<script src="app.js"></script>
+const box = document.getElementById("messages");
+
+if (msgs.length === 0) {
+  box.innerHTML = "<p>Mesaj yok</p>";
+} else {
+  msgs.forEach(m => {
+    const p = document.createElement("p");
+    p.textContent = m;
+    box.appendChild(p);
+  });
+}
+
+/* OKUNUNCA SİL (senin fikrin) */
+localStorage.removeItem(key);
+</script>
+
 </body>
 </html>
