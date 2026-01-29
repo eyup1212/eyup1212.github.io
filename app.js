@@ -1,4 +1,17 @@
-// USER
+// AUTO LOGIN
+let uid = localStorage.getItem("uid");
+if (uid) {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("app").style.display = "block";
+
+  document.getElementById("link").value =
+    location.origin + "/send.html?to=" + uid;
+
+  loadMessages();
+  receiveMessages();
+}
+
+// LOGIN (ilk defa)
 function login() {
   let name = document.getElementById("name").value;
   if (!name) return;
@@ -12,8 +25,6 @@ function login() {
 
   document.getElementById("link").value =
     location.origin + "/send.html?to=" + id;
-
-  loadMessages();
 }
 
 // LOAD MESSAGES
@@ -21,11 +32,25 @@ function loadMessages() {
   let msgs = JSON.parse(localStorage.getItem("messages") || "[]");
   let ul = document.getElementById("messages");
   ul.innerHTML = "";
-  msgs.reverse().forEach(m => {
+  msgs.slice().reverse().forEach(m => {
     let li = document.createElement("li");
     li.textContent = m;
     ul.appendChild(li);
   });
+}
+
+// RECEIVE MESSAGES
+function receiveMessages() {
+  let key = "inbox_" + uid;
+  let inbox = JSON.parse(localStorage.getItem(key) || "[]");
+
+  if (inbox.length) {
+    let msgs = JSON.parse(localStorage.getItem("messages"));
+    msgs.push(...inbox);
+    localStorage.setItem("messages", JSON.stringify(msgs));
+    localStorage.removeItem(key);
+    loadMessages();
+  }
 }
 
 // SEND MESSAGE
@@ -35,7 +60,6 @@ function send() {
   let text = document.getElementById("msg").value;
   if (!text) return;
 
-  // SAHTE RAM SİMÜLASYONU
   let key = "inbox_" + to;
   let box = JSON.parse(localStorage.getItem(key) || "[]");
   box.push(text);
@@ -43,18 +67,4 @@ function send() {
 
   alert("Anonim mesaj gönderildi");
   document.getElementById("msg").value = "";
-}
-
-// RECEIVE (sadece alıcı açınca)
-let myId = localStorage.getItem("uid");
-if (myId) {
-  let key = "inbox_" + myId;
-  let inbox = JSON.parse(localStorage.getItem(key) || "[]");
-  if (inbox.length) {
-    let msgs = JSON.parse(localStorage.getItem("messages"));
-    msgs.push(...inbox);
-    localStorage.setItem("messages", JSON.stringify(msgs));
-    localStorage.removeItem(key);
-    loadMessages();
-  }
 }
