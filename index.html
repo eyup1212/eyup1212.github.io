@@ -3,141 +3,121 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Canlı ve Gerçekçi Çiçek Animasyonu</title>
+<title>Canlı & Renkli Çiçek Animasyonu</title>
 <style>
-  /* Genel stil */
   body {
     margin: 0;
-    background: linear-gradient(135deg, #00111f, #003366);
-    height: 100vh;
+    background: linear-gradient(135deg, #ffe6f0, #ffb6c1);
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-
-  .flower-container {
+  .flower {
     position: relative;
-    width: 300px;
-    height: 350px;
-    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
-    animation: float 6s ease-in-out infinite;
+    width: 220px;
+    height: 280px;
+    animation: floatUpDown 5s ease-in-out infinite;
   }
-
-  @keyframes float {
+  @keyframes floatUpDown {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-15px); }
   }
-
-  /* Sap */
   .stem {
     position: absolute;
     bottom: 0;
     left: 50%;
     width: 14px;
     height: 180px;
-    background: linear-gradient(to top, #155724, #4caf50);
-    border-radius: 10px;
+    background: linear-gradient(to top, #2ecc40, #27ae60);
+    border-radius: 8px;
     transform-origin: top center;
     animation: sway 4s ease-in-out infinite;
-    box-shadow: inset 0 0 8px #2e7d32;
+    box-shadow: inset 0 0 10px #27ae60;
   }
-
   @keyframes sway {
     0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(6deg); }
+    50% { transform: rotate(8deg); }
   }
-
-  /* Yapraklar */
   .leaf {
     position: absolute;
-    width: 120px;
+    width: 110px;
     height: 70px;
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    background: linear-gradient(135deg, #27ae60, #145a32);
     border-radius: 60% 40% 40% 60% / 70% 50% 50% 70%;
-    box-shadow: 0 0 10px rgba(46,125,50,0.6);
-    filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.4));
+    box-shadow: 0 0 12px rgba(33, 105, 32, 0.7);
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
     transform-origin: right center;
     animation: leafSwing 5s ease-in-out infinite;
   }
-
   .leaf.left {
     bottom: 90px;
-    left: 15%;
-    transform-origin: right center;
-    animation-delay: 0s;
+    left: 12%;
     animation-name: leafSwingLeft;
   }
   .leaf.right {
     bottom: 100px;
-    right: 15%;
-    transform-origin: left center;
+    right: 12%;
     animation-delay: 2.5s;
   }
-
   @keyframes leafSwing {
     0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(8deg); }
+    50% { transform: rotate(10deg); }
   }
   @keyframes leafSwingLeft {
     0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-8deg); }
+    50% { transform: rotate(-10deg); }
   }
-
-  /* Çiçek merkezi */
-  .center {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    width: 110px;
-    height: 110px;
-    background: radial-gradient(circle at center, #ffd93b, #f7b500);
-    border-radius: 50%;
-    box-shadow:
-      0 0 20px 7px #f7b500cc,
-      inset 0 0 15px 7px #ffeb3b;
-    transform: translateX(-50%);
-    z-index: 10;
-  }
-
-  /* Yapraklar */
   .petal {
     position: absolute;
-    width: 90px;
-    height: 120px;
+    width: 95px;
+    height: 130px;
     background: linear-gradient(135deg, #ff6f91, #d81b60);
     border-radius: 80% 80% 80% 80% / 60% 60% 40% 40%;
-    box-shadow: 0 5px 10px rgba(216, 27, 96, 0.5);
+    box-shadow: 0 8px 12px rgba(216, 27, 96, 0.6);
     transform-origin: bottom center;
     animation: petalOpenClose 6s ease-in-out infinite;
-    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
     opacity: 0.95;
     z-index: 5;
   }
-
   .petal:nth-child(1) { top: 20px; left: 50%; transform: translateX(-50%) rotate(0deg); animation-delay: 0s; }
   .petal:nth-child(2) { top: 0; left: 50%; transform: translateX(-50%) rotate(60deg); animation-delay: 1s; }
   .petal:nth-child(3) { top: 10px; left: 50%; transform: translateX(-50%) rotate(120deg); animation-delay: 2s; }
   .petal:nth-child(4) { top: 50px; left: 50%; transform: translateX(-50%) rotate(180deg); animation-delay: 3s; }
   .petal:nth-child(5) { top: 80px; left: 50%; transform: translateX(-50%) rotate(240deg); animation-delay: 4s; }
   .petal:nth-child(6) { top: 90px; left: 50%; transform: translateX(-50%) rotate(300deg); animation-delay: 5s; }
-
   @keyframes petalOpenClose {
     0%, 100% {
       transform: translateX(-50%) scaleY(1) rotate(var(--rot));
       opacity: 0.95;
-      filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
     }
     50% {
       transform: translateX(-50%) scaleY(0.7) rotate(var(--rot));
       opacity: 0.7;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.08));
     }
+  }
+  .center {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    width: 115px;
+    height: 115px;
+    background: radial-gradient(circle at center, #ffd93b, #f7b500);
+    border-radius: 50%;
+    box-shadow:
+      0 0 25px 10px #f7b500cc,
+      inset 0 0 20px 10px #ffeb3b;
+    transform: translateX(-50%);
+    z-index: 10;
   }
 </style>
 </head>
 <body>
-  <div class="flower-container">
+  <div class="flower">
     <div class="stem"></div>
     <div class="leaf left"></div>
     <div class="leaf right"></div>
