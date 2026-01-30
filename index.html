@@ -3,37 +3,153 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SVG Çiçek Görseli</title>
+<title>Canlı ve Gerçekçi Çiçek Animasyonu</title>
 <style>
+  /* Genel stil */
   body {
-    background-color: #000;
+    margin: 0;
+    background: linear-gradient(135deg, #00111f, #003366);
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-  svg {
-    width: 200px;
-    height: 200px;
+
+  .flower-container {
+    position: relative;
+    width: 300px;
+    height: 350px;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  /* Sap */
+  .stem {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 14px;
+    height: 180px;
+    background: linear-gradient(to top, #155724, #4caf50);
+    border-radius: 10px;
+    transform-origin: top center;
+    animation: sway 4s ease-in-out infinite;
+    box-shadow: inset 0 0 8px #2e7d32;
+  }
+
+  @keyframes sway {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(6deg); }
+  }
+
+  /* Yapraklar */
+  .leaf {
+    position: absolute;
+    width: 120px;
+    height: 70px;
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    border-radius: 60% 40% 40% 60% / 70% 50% 50% 70%;
+    box-shadow: 0 0 10px rgba(46,125,50,0.6);
+    filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.4));
+    transform-origin: right center;
+    animation: leafSwing 5s ease-in-out infinite;
+  }
+
+  .leaf.left {
+    bottom: 90px;
+    left: 15%;
+    transform-origin: right center;
+    animation-delay: 0s;
+    animation-name: leafSwingLeft;
+  }
+  .leaf.right {
+    bottom: 100px;
+    right: 15%;
+    transform-origin: left center;
+    animation-delay: 2.5s;
+  }
+
+  @keyframes leafSwing {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(8deg); }
+  }
+  @keyframes leafSwingLeft {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-8deg); }
+  }
+
+  /* Çiçek merkezi */
+  .center {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    width: 110px;
+    height: 110px;
+    background: radial-gradient(circle at center, #ffd93b, #f7b500);
+    border-radius: 50%;
+    box-shadow:
+      0 0 20px 7px #f7b500cc,
+      inset 0 0 15px 7px #ffeb3b;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  /* Yapraklar */
+  .petal {
+    position: absolute;
+    width: 90px;
+    height: 120px;
+    background: linear-gradient(135deg, #ff6f91, #d81b60);
+    border-radius: 80% 80% 80% 80% / 60% 60% 40% 40%;
+    box-shadow: 0 5px 10px rgba(216, 27, 96, 0.5);
+    transform-origin: bottom center;
+    animation: petalOpenClose 6s ease-in-out infinite;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+    opacity: 0.95;
+    z-index: 5;
+  }
+
+  .petal:nth-child(1) { top: 20px; left: 50%; transform: translateX(-50%) rotate(0deg); animation-delay: 0s; }
+  .petal:nth-child(2) { top: 0; left: 50%; transform: translateX(-50%) rotate(60deg); animation-delay: 1s; }
+  .petal:nth-child(3) { top: 10px; left: 50%; transform: translateX(-50%) rotate(120deg); animation-delay: 2s; }
+  .petal:nth-child(4) { top: 50px; left: 50%; transform: translateX(-50%) rotate(180deg); animation-delay: 3s; }
+  .petal:nth-child(5) { top: 80px; left: 50%; transform: translateX(-50%) rotate(240deg); animation-delay: 4s; }
+  .petal:nth-child(6) { top: 90px; left: 50%; transform: translateX(-50%) rotate(300deg); animation-delay: 5s; }
+
+  @keyframes petalOpenClose {
+    0%, 100% {
+      transform: translateX(-50%) scaleY(1) rotate(var(--rot));
+      opacity: 0.95;
+      filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+    }
+    50% {
+      transform: translateX(-50%) scaleY(0.7) rotate(var(--rot));
+      opacity: 0.7;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+    }
   }
 </style>
 </head>
 <body>
-  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <!-- Sap -->
-    <rect x="95" y="100" width="10" height="80" fill="green" />
-    <!-- Yapraklar -->
-    <ellipse cx="80" cy="140" rx="20" ry="40" fill="limegreen" />
-    <ellipse cx="120" cy="140" rx="20" ry="40" fill="limegreen" />
-    <!-- Çiçek yaprakları -->
-    <circle cx="100" cy="70" r="30" fill="#ff69b4" />
-    <circle cx="100" cy="40" r="20" fill="#ff1493" />
-    <circle cx="70" cy="70" r="20" fill="#ff1493" />
-    <circle cx="130" cy="70" r="20" fill="#ff1493" />
-    <circle cx="85" cy="90" r="20" fill="#ff1493" />
-    <circle cx="115" cy="90" r="20" fill="#ff1493" />
-    <!-- Çiçek merkezi -->
-    <circle cx="100" cy="70" r="15" fill="yellow" />
-  </svg>
+  <div class="flower-container">
+    <div class="stem"></div>
+    <div class="leaf left"></div>
+    <div class="leaf right"></div>
+
+    <div class="petal" style="--rot: 0deg;"></div>
+    <div class="petal" style="--rot: 60deg;"></div>
+    <div class="petal" style="--rot: 120deg;"></div>
+    <div class="petal" style="--rot: 180deg;"></div>
+    <div class="petal" style="--rot: 240deg;"></div>
+    <div class="petal" style="--rot: 300deg;"></div>
+
+    <div class="center"></div>
+  </div>
 </body>
 </html>
