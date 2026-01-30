@@ -3,98 +3,78 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gerçekçi Animasyonlu Çiçek</title>
+<title>Canlanan Çiçek</title>
 <style>
   body {
     margin: 0;
-    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-    height: 100vh;
+    background-color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
   }
   .flower {
     position: relative;
-    width: 200px;
-    height: 250px;
+    width: 150px;
+    height: 200px;
+    animation: rise 4s ease-in-out infinite alternate;
+  }
+  @keyframes rise {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-30px) scale(1.1);
+      opacity: 0.9;
+    }
   }
   .stem {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 12px;
-    height: 180px;
-    background: linear-gradient(to top, #2e7d32, #81c784);
-    border-radius: 6px;
-    transform-origin: top center;
-    animation: sway 4s ease-in-out infinite;
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
-  }
-  @keyframes sway {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(7deg); }
-  }
-  .center {
-    position: absolute;
-    top: 40px;
-    left: 50%;
+    width: 10px;
+    height: 140px;
+    background: linear-gradient(to top, #2ecc40, #27ae60);
+    border-radius: 5px;
     transform: translateX(-50%);
-    width: 90px;
-    height: 90px;
-    background: radial-gradient(circle at center, #ffeb3b, #fbc02d);
-    border-radius: 50%;
-    box-shadow: 0 0 20px 5px rgba(255, 235, 59, 0.6);
   }
   .petal {
     position: absolute;
-    width: 80px;
-    height: 100px;
-    background: linear-gradient(135deg, #ff8a80, #ff5252);
+    width: 70px;
+    height: 90px;
+    background: radial-gradient(circle at 30% 30%, #ff3366, #cc0033);
     border-radius: 80% 80% 80% 80% / 60% 60% 40% 40%;
     transform-origin: bottom center;
-    animation: petalOpen 5s ease-in-out infinite;
-    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.1));
-    opacity: 0.9;
+    opacity: 0.95;
+    animation: petal-open 4s ease-in-out infinite;
   }
-  .petal:nth-child(2) {
-    top: 20px;
+  .petal:nth-child(1) { top: 50px; left: 40px; transform: rotate(0deg); animation-delay: 0s; }
+  .petal:nth-child(2) { top: 20px; left: 75px; transform: rotate(72deg); animation-delay: 0.8s; }
+  .petal:nth-child(3) { top: 10px; left: 115px; transform: rotate(144deg); animation-delay: 1.6s; }
+  .petal:nth-child(4) { top: 30px; left: 150px; transform: rotate(216deg); animation-delay: 2.4s; }
+  .petal:nth-child(5) { top: 55px; left: 170px; transform: rotate(288deg); animation-delay: 3.2s; }
+
+  .center {
+    position: absolute;
+    top: 90px;
     left: 50%;
-    transform: translateX(-50%) rotate(0deg);
-    animation-delay: 0s;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at center, #ffd93b, #f7b500);
+    border-radius: 50%;
+    box-shadow: 0 0 15px 5px #f7b500aa;
+    transform: translateX(-50%);
   }
-  .petal:nth-child(3) {
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%) rotate(72deg);
-    animation-delay: 0.8s;
-  }
-  .petal:nth-child(4) {
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%) rotate(144deg);
-    animation-delay: 1.6s;
-  }
-  .petal:nth-child(5) {
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%) rotate(216deg);
-    animation-delay: 2.4s;
-  }
-  .petal:nth-child(6) {
-    top: 75px;
-    left: 50%;
-    transform: translateX(-50%) rotate(288deg);
-    animation-delay: 3.2s;
-  }
-  @keyframes petalOpen {
+
+  @keyframes petal-open {
     0%, 100% {
-      transform: translateX(-50%) rotate(var(--rot)) scaleY(1);
-      opacity: 0.9;
+      transform: scaleY(1);
+      opacity: 0.95;
     }
     50% {
-      transform: translateX(-50%) rotate(var(--rot)) scaleY(0.7);
-      opacity: 0.6;
+      transform: scaleY(0.7);
+      opacity: 0.7;
     }
   }
 </style>
@@ -102,11 +82,11 @@
 <body>
   <div class="flower">
     <div class="stem"></div>
-    <div class="petal" style="--rot: 0deg;"></div>
-    <div class="petal" style="--rot: 72deg;"></div>
-    <div class="petal" style="--rot: 144deg;"></div>
-    <div class="petal" style="--rot: 216deg;"></div>
-    <div class="petal" style="--rot: 288deg;"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
     <div class="center"></div>
   </div>
 </body>
