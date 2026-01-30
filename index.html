@@ -1,41 +1,105 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Anonim Mesajlar</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Instagram Giriş</title>
+<style>
+  body {
+    background: #fafafa;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .login-container {
+    background: white;
+    border: 1px solid #ddd;
+    width: 350px;
+    padding: 40px 30px;
+    text-align: center;
+  }
+  .logo {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 40px;
+    margin-bottom: 30px;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    margin: 8px 0 16px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
+  }
+  button {
+    width: 100%;
+    background-color: #3897f0;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #2878cc;
+  }
+  .or {
+    margin: 20px 0;
+    font-weight: bold;
+    color: #999;
+    position: relative;
+  }
+  .or::before,
+  .or::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #ddd;
+  }
+  .or::before {
+    left: 0;
+  }
+  .or::after {
+    right: 0;
+  }
+  .forgot {
+    color: #00376b;
+    font-size: 12px;
+    margin-top: 15px;
+    cursor: pointer;
+  }
+  .signup {
+    margin-top: 20px;
+    font-size: 14px;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+  }
+  .signup a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #3897f0;
+  }
+</style>
 </head>
 <body>
-
-<h2>Gelen Mesajlar</h2>
-<div id="messages"></div>
-
-<script>
-/* kullanıcıyı sabitle */
-if (!localStorage.getItem("user")) {
-  localStorage.setItem("user", "testuser");
-}
-
-const user = localStorage.getItem("user");
-const key = "messages_" + user;
-
-/* mesajları çek */
-const msgs = JSON.parse(localStorage.getItem(key) || "[]");
-
-const box = document.getElementById("messages");
-
-if (msgs.length === 0) {
-  box.innerHTML = "<p>Mesaj yok</p>";
-} else {
-  msgs.forEach(m => {
-    const p = document.createElement("p");
-    p.textContent = m;
-    box.appendChild(p);
-  });
-}
-
-/* OKUNUNCA SİL (senin fikrin) */
-localStorage.removeItem(key);
-</script>
-
+  <div class="login-container">
+    <div class="logo">Instagram</div>
+    <input type="text" placeholder="Telefon, kullanıcı adı veya e-posta" />
+    <input type="password" placeholder="Şifre" />
+    <button>Giriş Yap</button>
+    <div class="or">VEYA</div>
+    <div class="forgot">Şifreni mi unuttun?</div>
+  </div>
+  <div class="signup">
+    Hesabın yok mu? <a href="#">Kaydol</a>
+  </div>
 </body>
 </html>
