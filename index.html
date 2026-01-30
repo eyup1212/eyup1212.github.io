@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Canlanan Çiçek</title>
+<title>CSS ile Çiçek</title>
 <style>
   body {
-    margin: 0;
-    background-color: #000;
+    background: #f0f8ff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,45 +14,32 @@
   }
   .flower {
     position: relative;
-    width: 150px;
+    width: 200px;
     height: 200px;
-    animation: rise 4s ease-in-out infinite alternate;
-  }
-  @keyframes rise {
-    0% {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-30px) scale(1.1);
-      opacity: 0.9;
-    }
   }
   .stem {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 10px;
+    width: 12px;
     height: 140px;
-    background: linear-gradient(to top, #2ecc40, #27ae60);
-    border-radius: 5px;
+    background: linear-gradient(to top, #228B22, #7CFC00);
+    border-radius: 6px;
     transform: translateX(-50%);
   }
   .petal {
     position: absolute;
     width: 70px;
-    height: 90px;
-    background: radial-gradient(circle at 30% 30%, #ff3366, #cc0033);
+    height: 100px;
+    background: radial-gradient(circle at 30% 30%, #ff69b4, #ff1493);
     border-radius: 80% 80% 80% 80% / 60% 60% 40% 40%;
     transform-origin: bottom center;
-    opacity: 0.95;
-    animation: petal-open 4s ease-in-out infinite;
   }
-  .petal:nth-child(1) { top: 50px; left: 40px; transform: rotate(0deg); animation-delay: 0s; }
-  .petal:nth-child(2) { top: 20px; left: 75px; transform: rotate(72deg); animation-delay: 0.8s; }
-  .petal:nth-child(3) { top: 10px; left: 115px; transform: rotate(144deg); animation-delay: 1.6s; }
-  .petal:nth-child(4) { top: 30px; left: 150px; transform: rotate(216deg); animation-delay: 2.4s; }
-  .petal:nth-child(5) { top: 55px; left: 170px; transform: rotate(288deg); animation-delay: 3.2s; }
+  .petal:nth-child(2) { top: 50px; left: 40px; transform: rotate(0deg); }
+  .petal:nth-child(3) { top: 20px; left: 75px; transform: rotate(72deg); }
+  .petal:nth-child(4) { top: 10px; left: 115px; transform: rotate(144deg); }
+  .petal:nth-child(5) { top: 30px; left: 150px; transform: rotate(216deg); }
+  .petal:nth-child(6) { top: 55px; left: 170px; transform: rotate(288deg); }
 
   .center {
     position: absolute;
@@ -61,21 +47,10 @@
     left: 50%;
     width: 80px;
     height: 80px;
-    background: radial-gradient(circle at center, #ffd93b, #f7b500);
+    background: radial-gradient(circle at center, #ffd700, #ffa500);
     border-radius: 50%;
-    box-shadow: 0 0 15px 5px #f7b500aa;
+    box-shadow: 0 0 15px 5px #ffa500aa;
     transform: translateX(-50%);
-  }
-
-  @keyframes petal-open {
-    0%, 100% {
-      transform: scaleY(1);
-      opacity: 0.95;
-    }
-    50% {
-      transform: scaleY(0.7);
-      opacity: 0.7;
-    }
   }
 </style>
 </head>
