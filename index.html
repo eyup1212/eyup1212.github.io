@@ -3,133 +3,122 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Canlı & Renkli Çiçek Animasyonu</title>
+<title>Çiçek Buketi</title>
 <style>
   body {
-    margin: 0;
-    background: linear-gradient(135deg, #ffe6f0, #ffb6c1);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
   }
-  .flower {
+  .vase {
+    width: 150px;
+    height: 200px;
+    background: linear-gradient(135deg, #cce7ff, #99ccff);
+    border: 2px solid #99bbff;
+    border-radius: 10px 10px 40px 40px;
     position: relative;
-    width: 220px;
-    height: 280px;
-    animation: floatUpDown 5s ease-in-out infinite;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   }
-  @keyframes floatUpDown {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+  .water {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    height: 60px;
+    background: rgba(173, 216, 230, 0.6);
+    border-radius: 0 0 40px 40px;
   }
   .stem {
+    width: 6px;
+    background-color: #2e7d32;
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 14px;
-    height: 180px;
-    background: linear-gradient(to top, #2ecc40, #27ae60);
-    border-radius: 8px;
-    transform-origin: top center;
-    animation: sway 4s ease-in-out infinite;
-    box-shadow: inset 0 0 10px #27ae60;
+    bottom: 80px;
+    border-radius: 3px;
   }
-  @keyframes sway {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(8deg); }
-  }
-  .leaf {
+  /* Stems positions */
+  .stem1 { left: 40px; height: 120px; }
+  .stem2 { left: 60px; height: 130px; }
+  .stem3 { left: 80px; height: 125px; }
+  .stem4 { left: 100px; height: 135px; }
+  .stem5 { left: 120px; height: 115px; }
+
+  /* Flowers */
+  .flower {
     position: absolute;
-    width: 110px;
-    height: 70px;
-    background: linear-gradient(135deg, #27ae60, #145a32);
-    border-radius: 60% 40% 40% 60% / 70% 50% 50% 70%;
-    box-shadow: 0 0 12px rgba(33, 105, 32, 0.7);
-    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
-    transform-origin: right center;
-    animation: leafSwing 5s ease-in-out infinite;
-  }
-  .leaf.left {
-    bottom: 90px;
-    left: 12%;
-    animation-name: leafSwingLeft;
-  }
-  .leaf.right {
-    bottom: 100px;
-    right: 12%;
-    animation-delay: 2.5s;
-  }
-  @keyframes leafSwing {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(10deg); }
-  }
-  @keyframes leafSwingLeft {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-10deg); }
-  }
-  .petal {
-    position: absolute;
-    width: 95px;
-    height: 130px;
-    background: linear-gradient(135deg, #ff6f91, #d81b60);
-    border-radius: 80% 80% 80% 80% / 60% 60% 40% 40%;
-    box-shadow: 0 8px 12px rgba(216, 27, 96, 0.6);
-    transform-origin: bottom center;
-    animation: petalOpenClose 6s ease-in-out infinite;
-    filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
-    opacity: 0.95;
-    z-index: 5;
-  }
-  .petal:nth-child(1) { top: 20px; left: 50%; transform: translateX(-50%) rotate(0deg); animation-delay: 0s; }
-  .petal:nth-child(2) { top: 0; left: 50%; transform: translateX(-50%) rotate(60deg); animation-delay: 1s; }
-  .petal:nth-child(3) { top: 10px; left: 50%; transform: translateX(-50%) rotate(120deg); animation-delay: 2s; }
-  .petal:nth-child(4) { top: 50px; left: 50%; transform: translateX(-50%) rotate(180deg); animation-delay: 3s; }
-  .petal:nth-child(5) { top: 80px; left: 50%; transform: translateX(-50%) rotate(240deg); animation-delay: 4s; }
-  .petal:nth-child(6) { top: 90px; left: 50%; transform: translateX(-50%) rotate(300deg); animation-delay: 5s; }
-  @keyframes petalOpenClose {
-    0%, 100% {
-      transform: translateX(-50%) scaleY(1) rotate(var(--rot));
-      opacity: 0.95;
-      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
-    }
-    50% {
-      transform: translateX(-50%) scaleY(0.7) rotate(var(--rot));
-      opacity: 0.7;
-      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.08));
-    }
-  }
-  .center {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    width: 115px;
-    height: 115px;
-    background: radial-gradient(circle at center, #ffd93b, #f7b500);
     border-radius: 50%;
-    box-shadow:
-      0 0 25px 10px #f7b500cc,
-      inset 0 0 20px 10px #ffeb3b;
-    transform: translateX(-50%);
-    z-index: 10;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
   }
+  /* Red Roses */
+  .rose {
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle at center, #d32f2f, #7b0000);
+    border: 2px solid #a00000;
+    top: 20px;
+  }
+  .rose1 { left: 30px; }
+  .rose2 { left: 70px; }
+  .rose3 { left: 110px; }
+
+  /* Sunflowers */
+  .sunflower {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at center, #ffeb3b, #fbc02d);
+    border: 2px solid #f9a825;
+    top: 10px;
+  }
+  .sunflower1 { left: 10px; }
+  .sunflower2 { left: 90px; }
+
+  /* White daisies */
+  .daisy {
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle at center, #fff, #ddd);
+    border: 2px solid #ccc;
+    top: 50px;
+  }
+  .daisy1 { left: 50px; }
+  .daisy2 { left: 130px; }
+
+  /* Leaves */
+  .leaf {
+    width: 30px;
+    height: 15px;
+    background: linear-gradient(45deg, #388e3c, #2e7d32);
+    border-radius: 15px 15px 15px 15px;
+    position: absolute;
+    bottom: 100px;
+    transform: rotate(20deg);
+  }
+  .leaf1 { left: 20px; }
+  .leaf2 { left: 100px; transform: rotate(-20deg); bottom: 110px; }
 </style>
 </head>
 <body>
-  <div class="flower">
-    <div class="stem"></div>
-    <div class="leaf left"></div>
-    <div class="leaf right"></div>
+  <div class="vase">
+    <div class="water"></div>
+    <div class="stem stem1"></div>
+    <div class="stem stem2"></div>
+    <div class="stem stem3"></div>
+    <div class="stem stem4"></div>
+    <div class="stem stem5"></div>
 
-    <div class="petal" style="--rot: 0deg;"></div>
-    <div class="petal" style="--rot: 60deg;"></div>
-    <div class="petal" style="--rot: 120deg;"></div>
-    <div class="petal" style="--rot: 180deg;"></div>
-    <div class="petal" style="--rot: 240deg;"></div>
-    <div class="petal" style="--rot: 300deg;"></div>
+    <div class="flower rose rose1"></div>
+    <div class="flower rose rose2"></div>
+    <div class="flower rose rose3"></div>
 
-    <div class="center"></div>
+    <div class="flower sunflower sunflower1"></div>
+    <div class="flower sunflower sunflower2"></div>
+
+    <div class="flower daisy daisy1"></div>
+    <div class="flower daisy daisy2"></div>
+
+    <div class="leaf leaf1"></div>
+    <div class="leaf leaf2"></div>
   </div>
 </body>
 </html>
