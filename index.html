@@ -3,85 +3,106 @@
 <head>
 <meta charset="UTF-8" />
 <title>Anonim Mesaj</title>
-
 <style>
-/* === ORTAK === */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.box {
-  width: 320px;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
-textarea {
-  width: 100%;
-  height: 90px;
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 6px;
-}
-button {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  body {
+    margin: 0; font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    background: #f0f0f0;
+    transition: background 0.5s;
+  }
+  .hidden { display: none; }
+  .box {
+    width: 320px; padding: 20px;
+    border-radius: 10px; text-align: center;
+    background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  }
+  input, textarea, button {
+    width: 100%; margin-top: 10px; padding: 10px; border-radius: 6px;
+    border: 1px solid #ccc; box-sizing: border-box;
+    font-size: 1rem;
+  }
+  button {
+    cursor: pointer; border: none; background: #4caf50; color: white;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  button:hover { background: #45a049; }
 
-/* === TEMALAR === */
-body.hacker {
-  background: #000;
-  color: #0f0;
-}
-body.hacker .box {
-  background: #020;
-  box-shadow: 0 0 20px #0f0;
-}
-
-body.plain {
-  background: #f2f2f2;
-  color: #222;
-}
-body.plain .box {
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,.1);
-}
-
-body.flower {
-  background: #fff0f5;
-  color: #444;
-}
-body.flower .box {
-  background: #ffffff;
-  border: 2px dashed #f5a;
-}
+  /* Temalar */
+  body.hacker { background: #000; color: #0f0; }
+  body.hacker .box { background: #020; box-shadow: 0 0 20px #0f0; }
+  body.plain { background: #f2f2f2; color: #222; }
+  body.plain .box { background: #fff; box-shadow: 0 0 10px rgba(0,0,0,.1); }
+  body.flower { background: #fff0f5; color: #444; }
+  body.flower .box { background: #fff; border: 2px dashed #f5a; }
 </style>
 </head>
-
 <body>
-  <div class="box">
-    <h3 id="title">Anonim Mesaj</h3>
-    <textarea placeholder="Mesajını yaz..."></textarea>
-    <button>Gönder</button>
-  </div>
+
+<!-- İsim sor -->
+<div id="nameBox" class="box">
+  <h3>İsmini Gir</h3>
+  <input type="text" id="nameInput" placeholder="Adın ne?" />
+  <button id="nameBtn">Tamam</button>
+</div>
+
+<!-- Tema seç -->
+<div id="themeBox" class="box hidden">
+  <h3>🎨 Tema Seç</h3>
+  <button onclick="selectTheme('hacker')">🧪 Hacker</button>
+  <button onclick="selectTheme('plain')">⚡ Sade</button>
+  <button onclick="selectTheme('flower')">🌼 Çiçekli</button>
+</div>
+
+<!-- Mesaj ekranı -->
+<div id="messageBox" class="box hidden">
+  <h3 id="messageTitle">Anonim Mesaj</h3>
+  <textarea placeholder="Mesajını yaz..." id="messageInput"></textarea>
+  <button id="sendBtn">Gönder</button>
+</div>
 
 <script>
-/* === URL'DEN TEMA OKU === */
-const params = new URLSearchParams(window.location.search);
-const theme = params.get("theme") || "plain";
-document.body.classList.add(theme);
+  const nameBox = document.getElementById('nameBox');
+  const themeBox = document.getElementById('themeBox');
+  const messageBox = document.getElementById('messageBox');
+  const messageTitle = document.getElementById('messageTitle');
+  const nameInput = document.getElementById('nameInput');
 
-/* Başlıkları temaya göre değiştir */
-const title = document.getElementById("title");
-if (theme === "hacker") title.innerText = "🧪 Gizli Mesaj";
-if (theme === "flower") title.innerText = "🌼 Sana Bir Mesaj";
+  let userName = '';
+  let userTheme = '';
+
+  document.getElementById('nameBtn').onclick = () => {
+    const val = nameInput.value.trim();
+    if(val.length < 2) {
+      alert('Lütfen geçerli bir isim gir!');
+      return;
+    }
+    userName = val;
+    nameBox.classList.add('hidden');
+    themeBox.classList.remove('hidden');
+  };
+
+  function selectTheme(theme) {
+    userTheme = theme;
+    themeBox.classList.add('hidden');
+    messageBox.classList.remove('hidden');
+
+    document.body.className = ''; // Temizle
+    document.body.classList.add(theme);
+
+    if(theme === 'hacker') messageTitle.innerText = '🧪 Gizli Mesaj';
+    else if(theme === 'flower') messageTitle.innerText = '🌼 Sana Bir Mesaj';
+    else messageTitle.innerText = 'Anonim Mesaj';
+
+    // İsim ve tema bilgilerini localStorage'a kaydet (sonra lazım olabilir)
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('userTheme', userTheme);
+  }
+
+  // Buraya mesaj gönderme fonksiyonu eklenebilir
+
 </script>
+
 </body>
 </html>
