@@ -10,7 +10,7 @@
 
   <input id="messageInput" type="text" placeholder="Mesajını yaz..." />
   <br><br>
-  <button onclick="sendMessage()">Gönder</button>
+  <button id="sendBtn">Gönder</button>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
@@ -29,7 +29,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.sendMessage = async function () {
+    document.getElementById("sendBtn").addEventListener("click", async () => {
       const text = document.getElementById("messageInput").value;
 
       if (!text) {
@@ -48,7 +48,7 @@
       } catch (e) {
         alert("Hata: " + e.message);
       }
-    }
+    });
   </script>
 
 </body>
