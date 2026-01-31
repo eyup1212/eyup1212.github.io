@@ -2,20 +2,27 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<title>Anonim Mesaj</title>
+<title>Anonim Mesajlar</title>
 <style>
   body {
     margin: 0; font-family: Arial, sans-serif;
     min-height: 100vh;
-    display: flex; justify-content: center; align-items: center;
     background: #f0f0f0;
-    transition: background 0.5s;
+    transition: background 0.5s, color 0.5s;
+    color: #222;
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 20px;
   }
   .hidden { display: none; }
-  .box {
-    width: 320px; padding: 20px;
-    border-radius: 10px; text-align: center;
-    background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  .container {
+    width: 360px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    padding: 20px;
+  }
+  h2 {
+    margin-top: 0;
   }
   input, textarea, button {
     width: 100%; margin-top: 10px; padding: 10px; border-radius: 6px;
@@ -29,79 +36,247 @@
   }
   button:hover { background: #45a049; }
 
+  ul {
+    list-style: none; padding: 0; max-height: 300px; overflow-y: auto;
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+  }
+  li {
+    padding: 8px 5px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+  }
+  .date {
+    font-size: 0.7rem;
+    color: #999;
+  }
   /* Temalar */
   body.hacker { background: #000; color: #0f0; }
-  body.hacker .box { background: #020; box-shadow: 0 0 20px #0f0; }
+  body.hacker .container { background: #020; box-shadow: 0 0 20px #0f0; }
   body.plain { background: #f2f2f2; color: #222; }
-  body.plain .box { background: #fff; box-shadow: 0 0 10px rgba(0,0,0,.1); }
+  body.plain .container { background: #fff; box-shadow: 0 0 10px rgba(0,0,0,.1); }
   body.flower { background: #fff0f5; color: #444; }
-  body.flower .box { background: #fff; border: 2px dashed #f5a; }
+  body.flower .container {
+    background: #fff;
+    border: 2px dashed #f5a;
+  }
+
+  .nav {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+  }
+  .nav button {
+    flex: 1;
+    background: #2196F3;
+  }
+  .nav button:hover {
+    background: #0b7dda;
+  }
 </style>
 </head>
 <body>
 
-<!-- İsim sor -->
-<div id="nameBox" class="box">
-  <h3>İsmini Gir</h3>
-  <input type="text" id="nameInput" placeholder="Adın ne?" />
-  <button id="nameBtn">Tamam</button>
+<div class="container">
+
+  <!-- İsim + Tema seçimi (ilk açılışta) -->
+  <div id="setup" >
+    <h2>Hoşgeldin! Önce ismini gir:</h2>
+    <input type="text" id="nameInput" placeholder="Adın ne?" />
+    <h2>Ardından tema seç:</h2>
+    <div class="nav">
+      <button onclick="selectTheme('hacker')">🧪 Hacker</button>
+      <button onclick="selectTheme('plain')">⚡ Sade</button>
+      <button onclick="selectTheme('flower')">🌼 Çiçekli</button>
+    </div>
+  </div>
+
+  <!-- Ana Menü -->
+  <div id="mainMenu" class="hidden">
+    <h2 id="welcomeMsg"></h2>
+    <div class="nav">
+      <button onclick="showMessages()">Mesajlar</button>
+      <button onclick="showNewMessage()">Yeni Mesaj Yaz</button>
+      <button onclick="changeTheme()">Tema Değiştir</button>
+      <button onclick="changeName()">İsim Değiştir</button>
+    </div>
+  </div>
+
+  <!-- Mesajlar listesi -->
+  <div id="messagesList" class="hidden">
+    <h2>Anonim Mesajlar</h2>
+    <ul id="messagesUl"></ul>
+  </div>
+
+  <!-- Yeni Mesaj Yaz -->
+  <div id="newMessage" class="hidden">
+    <h2>Yeni Mesaj Yaz</h2>
+    <textarea id="msgInput" placeholder="Mesajını yaz..."></textarea>
+    <button id="sendBtn">Gönder</button>
+  </div>
+
 </div>
 
-<!-- Tema seç -->
-<div id="themeBox" class="box hidden">
-  <h3>🎨 Tema Seç</h3>
-  <button onclick="selectTheme('hacker')">🧪 Hacker</button>
-  <button onclick="selectTheme('plain')">⚡ Sade</button>
-  <button onclick="selectTheme('flower')">🌼 Çiçekli</button>
-</div>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-<!-- Mesaj ekranı -->
-<div id="messageBox" class="box hidden">
-  <h3 id="messageTitle">Anonim Mesaj</h3>
-  <textarea placeholder="Mesajını yaz..." id="messageInput"></textarea>
-  <button id="sendBtn">Gönder</button>
-</div>
-
-<script>
-  const nameBox = document.getElementById('nameBox');
-  const themeBox = document.getElementById('themeBox');
-  const messageBox = document.getElementById('messageBox');
-  const messageTitle = document.getElementById('messageTitle');
-  const nameInput = document.getElementById('nameInput');
-
-  let userName = '';
-  let userTheme = '';
-
-  document.getElementById('nameBtn').onclick = () => {
-    const val = nameInput.value.trim();
-    if(val.length < 2) {
-      alert('Lütfen geçerli bir isim gir!');
-      return;
-    }
-    userName = val;
-    nameBox.classList.add('hidden');
-    themeBox.classList.remove('hidden');
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
+    authDomain: "etik-social.firebaseapp.com",
+    projectId: "etik-social",
+    storageBucket: "etik-social.firebasestorage.app",
+    messagingSenderId: "358422049811",
+    appId: "1:358422049811:web:dd9506109825aaed65fbe6",
+    measurementId: "G-LGYN8FW2J8"
   };
 
-  function selectTheme(theme) {
-    userTheme = theme;
-    themeBox.classList.add('hidden');
-    messageBox.classList.remove('hidden');
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    document.body.className = ''; // Temizle
-    document.body.classList.add(theme);
+  // DOM elemanları
+  const setup = document.getElementById('setup');
+  const mainMenu = document.getElementById('mainMenu');
+  const welcomeMsg = document.getElementById('welcomeMsg');
+  const messagesList = document.getElementById('messagesList');
+  const messagesUl = document.getElementById('messagesUl');
+  const newMessage = document.getElementById('newMessage');
+  const msgInput = document.getElementById('msgInput');
+  const sendBtn = document.getElementById('sendBtn');
 
-    if(theme === 'hacker') messageTitle.innerText = '🧪 Gizli Mesaj';
-    else if(theme === 'flower') messageTitle.innerText = '🌼 Sana Bir Mesaj';
-    else messageTitle.innerText = 'Anonim Mesaj';
+  // Kullanıcı bilgileri
+  let userName = localStorage.getItem('userName') || '';
+  let userTheme = localStorage.getItem('userTheme') || 'plain';
 
-    // İsim ve tema bilgilerini localStorage'a kaydet (sonra lazım olabilir)
-    localStorage.setItem('userName', userName);
-    localStorage.setItem('userTheme', userTheme);
+  // Başlangıç fonksiyonu
+  function startApp() {
+    if(userName && userTheme) {
+      applyTheme(userTheme);
+      showMainMenu();
+    } else {
+      showSetup();
+    }
   }
 
-  // Buraya mesaj gönderme fonksiyonu eklenebilir
+  // Tema uygula
+  function applyTheme(theme) {
+    document.body.className = '';
+    document.body.classList.add(theme);
+  }
 
+  // Setup göster
+  function showSetup() {
+    setup.classList.remove('hidden');
+    mainMenu.classList.add('hidden');
+    messagesList.classList.add('hidden');
+    newMessage.classList.add('hidden');
+  }
+
+  // Main menüyü göster
+  function showMainMenu() {
+    setup.classList.add('hidden');
+    mainMenu.classList.remove('hidden');
+    messagesList.classList.add('hidden');
+    newMessage.classList.add('hidden');
+    welcomeMsg.innerText = `Hoşgeldin, ${userName}!`;
+  }
+
+  // Mesaj listesi göster
+  function showMessages() {
+    setup.classList.add('hidden');
+    mainMenu.classList.add('hidden');
+    messagesList.classList.remove('hidden');
+    newMessage.classList.add('hidden');
+    loadMessages();
+  }
+
+  // Yeni mesaj ekranı göster
+  function showNewMessage() {
+    setup.classList.add('hidden');
+    mainMenu.classList.add('hidden');
+    messagesList.classList.add('hidden');
+    newMessage.classList.remove('hidden');
+    msgInput.value = '';
+  }
+
+  // Tema seçimi fonksiyonu
+  window.selectTheme = function(theme) {
+    userTheme = theme;
+    localStorage.setItem('userTheme', theme);
+    applyTheme(theme);
+    if(userName.length < 2) {
+      alert('Önce ismini gir!');
+      showSetup();
+      return;
+    }
+    showMainMenu();
+  };
+
+  // İsim değiştirme fonksiyonu
+  window.changeName = function() {
+    userName = prompt('Yeni ismini gir:', userName);
+    if(userName && userName.trim().length >= 2) {
+      userName = userName.trim();
+      localStorage.setItem('userName', userName);
+      welcomeMsg.innerText = `Hoşgeldin, ${userName}!`;
+      alert('İsim güncellendi!');
+    } else {
+      alert('Geçerli isim girilmedi.');
+    }
+  };
+
+  // Tema değiştirme fonksiyonu
+  window.changeTheme = function() {
+    alert('Tema değiştirmek için sayfayı yenileyip tekrar tema seçmelisin.'); 
+  };
+
+  // Mesaj gönderme
+  sendBtn.onclick = async () => {
+    const text = msgInput.value.trim();
+    if(text.length < 2) {
+      alert('Lütfen geçerli bir mesaj yaz.');
+      return;
+    }
+    try {
+      await addDoc(collection(db, 'messages'), {
+        name: userName,
+        message: text,
+        timestamp: serverTimestamp()
+      });
+      alert('Mesaj gönderildi!');
+      msgInput.value = '';
+      showMessages();
+    } catch(e) {
+      alert('Mesaj gönderilirken hata oluştu: ' + e.message);
+    }
+  };
+
+  // Mesajları yükle ve listele (realtime)
+  function loadMessages() {
+    messagesUl.innerHTML = '<li>Yükleniyor...</li>';
+    const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'));
+    onSnapshot(q, (snapshot) => {
+      messagesUl.innerHTML = '';
+      if(snapshot.empty) {
+        messagesUl.innerHTML = '<li>Henüz mesaj yok.</li>';
+        return;
+      }
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const date = data.timestamp?.toDate();
+        const dateStr = date ? date.toLocaleString() : '...';
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${data.name}</strong>: ${data.message}<br><span class="date">${dateStr}</span>`;
+        messagesUl.appendChild(li);
+      });
+    });
+  }
+
+  // Başlat
+  window.onload = startApp;
 </script>
 
 </body>
