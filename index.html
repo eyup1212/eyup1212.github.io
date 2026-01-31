@@ -1,109 +1,53 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Çiçek 🌸</title>
-<style>
-  html,body{
-    margin:0; padding:0;
-    width:100%; height:100%;
-    background:#050505;
-    overflow:hidden;
-  }
-  canvas{display:block;}
-  .text{
-    position:absolute;
-    bottom:40px;
-    width:100%;
-    text-align:center;
-    font-family: system-ui, sans-serif;
-    color:#eaeaea;
-    opacity:.8;
-    letter-spacing:1px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Anonim Mesaj</title>
 </head>
 <body>
-<canvas id="c"></canvas>
-<div class="text">Sen yazılımcısın 🌸</div>
 
-<script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
-resize();
-window.addEventListener("resize", resize);
+  <h2>Anonim Mesaj Gönder</h2>
 
-function resize(){
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-}
+  <input id="messageInput" type="text" placeholder="Mesajını yaz..." />
+  <br><br>
+  <button onclick="sendMessage()">Gönder</button>
 
-let t = 0;
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-function drawStem(x, h){
-  ctx.strokeStyle = "#1fd1a1";
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(x, canvas.height);
-  ctx.lineTo(x, canvas.height - h);
-  ctx.stroke();
-}
+  <script>
+    // 🔴 BURAYI BİR SONRAKİ ADIMDA DOLDURACAĞIZ
+    const firebaseConfig = {
+      apiKey: "BURAYA",
+      authDomain: "BURAYA",
+      projectId: "BURAYA",
+    };
 
-function drawFlower(x, y, r){
-  ctx.save();
-  ctx.translate(x,y);
-  for(let i=0;i<6;i++){
-    ctx.rotate(Math.PI/3);
-    ctx.fillStyle = "rgba(100,255,220,0.9)";
-    ctx.beginPath();
-    ctx.ellipse(0,-r,r*0.6,r*1.2,0,0,Math.PI*2);
-    ctx.fill();
-  }
-  ctx.fillStyle="#fff6a8";
-  ctx.beginPath();
-  ctx.arc(0,0,r*0.4,0,Math.PI*2);
-  ctx.fill();
-  ctx.restore();
-}
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-function glow(x,y,r){
-  const g = ctx.createRadialGradient(x,y,0,x,y,r*4);
-  g.addColorStop(0,"rgba(120,255,220,.6)");
-  g.addColorStop(1,"rgba(0,0,0,0)");
-  ctx.fillStyle=g;
-  ctx.beginPath();
-  ctx.arc(x,y,r*4,0,Math.PI*2);
-  ctx.fill();
-}
+    function sendMessage() {
+      const text = document.getElementById("messageInput").value;
 
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  t+=0.01;
+      if (!text) {
+        alert("Mesaj boş olamaz");
+        return;
+      }
 
-  const baseX = canvas.width/2;
-  const height = Math.min(canvas.height*0.5, t*120);
+      db.collection("messages").add({
+        text: text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert("Mesaj gönderildi ✅");
+        document.getElementById("messageInput").value = "";
+      })
+      .catch(err => {
+        alert("Hata: " + err.message);
+      });
+    }
+  </script>
 
-  drawStem(baseX-80,height*0.9);
-  drawStem(baseX,height);
-  drawStem(baseX+80,height*0.85);
-
-  if(height>120){
-    drawFlower(baseX-80,canvas.height-height*0.9,22);
-    glow(baseX-80,canvas.height-height*0.9,22);
-  }
-  if(height>150){
-    drawFlower(baseX,canvas.height-height,26);
-    glow(baseX,canvas.height-height,26);
-  }
-  if(height>100){
-    drawFlower(baseX+80,canvas.height-height*0.85,20);
-    glow(baseX+80,canvas.height-height*0.85,20);
-  }
-
-  requestAnimationFrame(animate);
-}
-animate();
-</script>
 </body>
 </html>
