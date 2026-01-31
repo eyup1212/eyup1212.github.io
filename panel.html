@@ -5,45 +5,35 @@
   <title>Etik Sosyal | Admin Panel</title>
   <style>
     body {
-      background: #0f0f0f;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    h2 {
-      margin-bottom: 15px;
+      background:#0f0f0f;
+      color:#fff;
+      font-family:Arial;
+      padding:20px;
     }
     li {
-      background: #1c1c1c;
-      padding: 10px;
-      margin-bottom: 10px;
-      list-style: none;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background:#1c1c1c;
+      margin-bottom:10px;
+      padding:10px;
+      border-radius:6px;
+      list-style:none;
     }
     button {
-      background: crimson;
-      border: none;
-      color: white;
-      padding: 6px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      opacity: 0.8;
+      background:crimson;
+      color:white;
+      border:none;
+      padding:5px 10px;
+      border-radius:4px;
+      cursor:pointer;
+      margin-top:5px;
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🔐 ŞİFRE KORUMASI -->
 <script>
   const sifre = prompt("Admin şifresi:");
   if (sifre !== "1234") {
-    alert("Yetkisiz erişim");
     document.body.innerHTML = "";
     throw new Error("Yetkisiz");
   }
@@ -52,7 +42,6 @@
 <h2>📩 Gelen Anonim Mesajlar</h2>
 <ul id="messageList"></ul>
 
-<!-- 🔥 FIREBASE MESAJ OKU + SİL -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
   import {
@@ -63,41 +52,42 @@
     doc
   } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
     authDomain: "etik-social.firebaseapp.com",
     projectId: "etik-social"
   };
 
-  // Init
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
   const list = document.getElementById("messageList");
 
-  // Mesajları çek
   const snapshot = await getDocs(collection(db, "messages"));
 
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
 
-    const li = document.createElement("li");
+    // 🔥 TÜM ALANLARI METNE ÇEVİR
+    let mesaj = "";
+    for (const key in data) {
+      mesaj += `${key}: ${data[key]}\n`;
+    }
 
-    const span = document.createElement("span");
-    span.textContent = data.text || "(Boş mesaj)";
+    const li = document.createElement("li");
+    li.innerText = mesaj;
 
     const btn = document.createElement("button");
     btn.textContent = "Sil";
 
     btn.onclick = async () => {
-      if (confirm("Bu mesaj silinsin mi?")) {
+      if (confirm("Mesaj silinsin mi?")) {
         await deleteDoc(doc(db, "messages", docSnap.id));
         li.remove();
       }
     };
 
-    li.appendChild(span);
+    li.appendChild(document.createElement("br"));
     li.appendChild(btn);
     list.appendChild(li);
   });
