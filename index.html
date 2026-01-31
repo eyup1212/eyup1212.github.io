@@ -2,54 +2,84 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Anonim Mesaj</title>
+  <title>Anonim Mesaj Gönder</title>
+  <style>
+    body {
+      background:#0f0f0f;
+      color:#fff;
+      font-family:Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+    .box {
+      background:#1c1c1c;
+      padding:20px;
+      border-radius:8px;
+      width:300px;
+    }
+    textarea {
+      width:100%;
+      height:100px;
+      border-radius:6px;
+      border:none;
+      padding:10px;
+      resize:none;
+    }
+    button {
+      margin-top:10px;
+      width:100%;
+      padding:10px;
+      background:#4caf50;
+      border:none;
+      color:white;
+      border-radius:6px;
+      cursor:pointer;
+    }
+  </style>
 </head>
+
 <body>
 
-  <h2>Anonim Mesaj Gönder</h2>
+<div class="box">
+  <h3>📩 Anonim Mesaj</h3>
+  <textarea id="msg" placeholder="Mesajını yaz..."></textarea>
+  <button id="send">Gönder</button>
+  <p id="status"></p>
+</div>
 
-  <input id="messageInput" type="text" placeholder="Mesajını yaz..." />
-  <br><br>
-  <button id="sendBtn">Gönder</button>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } 
-      from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
+    authDomain: "etik-social.firebaseapp.com",
+    projectId: "etik-social"
+  };
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
-      authDomain: "etik-social.firebaseapp.com",
-      projectId: "etik-social",
-      storageBucket: "etik-social.firebasestorage.app",
-      messagingSenderId: "358422049811",
-      appId: "1:358422049811:web:dd9506109825aaed65fbe6",
-    };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  document.getElementById("send").onclick = async () => {
+    const text = document.getElementById("msg").value.trim();
+    if (!text) return;
 
-    document.getElementById("sendBtn").addEventListener("click", async () => {
-      const text = document.getElementById("messageInput").value;
-
-      if (!text) {
-        alert("Mesaj boş olamaz");
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "messages"), {
-          text: text,
-          createdAt: serverTimestamp()
-        });
-
-        alert("Mesaj gönderildi ✅");
-        document.getElementById("messageInput").value = "";
-      } catch (e) {
-        alert("Hata: " + e.message);
-      }
+    await addDoc(collection(db, "messages"), {
+      message: text,
+      createdAt: serverTimestamp()
     });
-  </script>
+
+    document.getElementById("status").innerText = "✅ Gönderildi";
+    document.getElementById("msg").value = "";
+  };
+</script>
 
 </body>
 </html>
