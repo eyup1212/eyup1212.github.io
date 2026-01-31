@@ -1,85 +1,87 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Anonim Mesaj Gönder</title>
-  <style>
-    body {
-      background:#0f0f0f;
-      color:#fff;
-      font-family:Arial;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-    }
-    .box {
-      background:#1c1c1c;
-      padding:20px;
-      border-radius:8px;
-      width:300px;
-    }
-    textarea {
-      width:100%;
-      height:100px;
-      border-radius:6px;
-      border:none;
-      padding:10px;
-      resize:none;
-    }
-    button {
-      margin-top:10px;
-      width:100%;
-      padding:10px;
-      background:#4caf50;
-      border:none;
-      color:white;
-      border-radius:6px;
-      cursor:pointer;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Anonim Mesaj</title>
+
+<style>
+/* === ORTAK === */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box {
+  width: 320px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+textarea {
+  width: 100%;
+  height: 90px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 6px;
+}
+button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* === TEMALAR === */
+body.hacker {
+  background: #000;
+  color: #0f0;
+}
+body.hacker .box {
+  background: #020;
+  box-shadow: 0 0 20px #0f0;
+}
+
+body.plain {
+  background: #f2f2f2;
+  color: #222;
+}
+body.plain .box {
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+
+body.flower {
+  background: #fff0f5;
+  color: #444;
+}
+body.flower .box {
+  background: #ffffff;
+  border: 2px dashed #f5a;
+}
+</style>
 </head>
 
 <body>
+  <div class="box">
+    <h3 id="title">Anonim Mesaj</h3>
+    <textarea placeholder="Mesajını yaz..."></textarea>
+    <button>Gönder</button>
+  </div>
 
-<div class="box">
-  <h3>📩 Anonim Mesaj</h3>
-  <textarea id="msg" placeholder="Mesajını yaz..."></textarea>
-  <button id="send">Gönder</button>
-  <p id="status"></p>
-</div>
+<script>
+/* === URL'DEN TEMA OKU === */
+const params = new URLSearchParams(window.location.search);
+const theme = params.get("theme") || "plain";
+document.body.classList.add(theme);
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
-    authDomain: "etik-social.firebaseapp.com",
-    projectId: "etik-social"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  document.getElementById("send").onclick = async () => {
-    const text = document.getElementById("msg").value.trim();
-    if (!text) return;
-
-    await addDoc(collection(db, "messages"), {
-      message: text,
-      createdAt: serverTimestamp()
-    });
-
-    document.getElementById("status").innerText = "✅ Gönderildi";
-    document.getElementById("msg").value = "";
-  };
+/* Başlıkları temaya göre değiştir */
+const title = document.getElementById("title");
+if (theme === "hacker") title.innerText = "🧪 Gizli Mesaj";
+if (theme === "flower") title.innerText = "🌼 Sana Bir Mesaj";
 </script>
-
 </body>
 </html>
