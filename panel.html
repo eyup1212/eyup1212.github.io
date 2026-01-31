@@ -5,7 +5,14 @@
   <title>Admin Panel</title>
 </head>
 <body>
-
+  
+<script>
+  const sifre = prompt("Admin şifresi:");
+  if (sifre !== "1234") {
+    alert("Yetkisiz erişim");
+    document.body.innerHTML = "";
+  }
+</script>
   <h2>📩 Gelen Anonim Mesajlar</h2>
   <ul id="messageList"></ul>
 
