@@ -12,22 +12,24 @@
   <br><br>
   <button onclick="sendMessage()">Gönder</button>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } 
+      from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  <script>
-    // 🔴 BURAYI BİR SONRAKİ ADIMDA DOLDURACAĞIZ
     const firebaseConfig = {
-      apiKey: "BURAYA",
-      authDomain: "BURAYA",
-      projectId: "BURAYA",
+      apiKey: "AIzaSyBSSFp-uB8XQdpCfS5jokwqkbnKBi6oXMc",
+      authDomain: "etik-social.firebaseapp.com",
+      projectId: "etik-social",
+      storageBucket: "etik-social.firebasestorage.app",
+      messagingSenderId: "358422049811",
+      appId: "1:358422049811:web:dd9506109825aaed65fbe6",
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    function sendMessage() {
+    window.sendMessage = async function () {
       const text = document.getElementById("messageInput").value;
 
       if (!text) {
@@ -35,17 +37,17 @@
         return;
       }
 
-      db.collection("messages").add({
-        text: text,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      .then(() => {
+      try {
+        await addDoc(collection(db, "messages"), {
+          text: text,
+          createdAt: serverTimestamp()
+        });
+
         alert("Mesaj gönderildi ✅");
         document.getElementById("messageInput").value = "";
-      })
-      .catch(err => {
-        alert("Hata: " + err.message);
-      });
+      } catch (e) {
+        alert("Hata: " + e.message);
+      }
     }
   </script>
 
